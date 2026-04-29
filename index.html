@@ -1,0 +1,186 @@
+<body>
+
+    <h1>DLT Inventory System</h1>
+    
+    <hr>
+    
+    <h2>Task 1 — Digital Signature</h2>
+    
+    <label for="t1-node">Originating Node</label><br>
+    <select id="t1-node"></select><br><br>
+    
+    <label for="t1-item_id">Item ID</label>
+    <input id="t1-item_id">
+    
+    <label for="t1-location">Location</label><br>
+    <input id="t1-location"><br><br>
+    
+    <label for="t1-qty">Quantity</label><br>
+    <input id="t1-qty" type="number"><br><br>
+    
+    <label for="t1-price">Price</label><br>
+    <input id="t1-price" type="number"><br><br>
+    
+    <button onclick="runTask1()">Sign Record</button>
+    
+    <hr>
+    
+    <h2>Task 2 — Consensus</h2>
+    
+    <label for="t2-node">Originating Node</label><br>
+    <select id="t2-node"></select><br><br>
+    
+    <label for="t2-item_id">Item ID</label><br>
+    <input id="t2-item_id"><br><br>
+    
+    <label for="t2-location">Location</label><br>
+    <input id="t2-location"><br><br>
+    
+    <label for="t2-qty">Quantity</label><br>
+    <input id="t2-qty" type="number"><br><br>
+    
+    <label for="t2-price">Price</label><br>
+    <input id="t2-price" type="number"><br><br>
+    
+    <label for="t2-sig">Signature</label><br>
+    <input id="t2-sig"><br><br>
+    
+    <button onclick="runTask2()">Run Consensus</button>
+    
+    <hr>
+    
+    <h2>Task 1 + 2</h2>
+    
+    <label for="t12-node">Originating Node</label><br>
+    <select id="t12-node"></select><br><br>
+    
+    <label for="t12-item_id">Item ID</label><br>
+    <input id="t12-item_id"><br><br>
+    
+    <label for="t12-location">Location</label><br>
+    <input id="t12-location"><br><br>
+    
+    <label for="t12-qty">Quantity</label><br>
+    <input id="t12-qty" type="number"><br><br>
+    
+    <label for="t12-price">Price</label><br>
+    <input id="t12-price" type="number"><br><br>
+    
+    <button onclick="runTask12()">Run Full Process</button>
+    
+    <hr>
+    
+    <h2>Task 3 — Query</h2>
+    
+    <label for="t3-item_id">Item ID</label><br>
+    <select id="t3-item_id"></select><br><br>
+    
+    <button onclick="runTask3()">Submit Query</button>
+    
+    <hr>
+    
+    <h2>Output</h2>
+    <pre id="output"></pre>
+    
+    <script>
+        // Keep your existing functions, but override how results display
+        
+        function showOutput(data) {
+            document.getElementById("output").textContent =
+                JSON.stringify(data, null, 2);
+        }
+        
+        // 🔹 OVERRIDE Task 1
+        async function runTask1() {
+            const node_id  = document.getElementById('t1-node').value;
+            const item_id  = document.getElementById('t1-item_id').value.trim();
+            const qty      = document.getElementById('t1-qty').value;
+            const price    = document.getElementById('t1-price').value;
+            const location = document.getElementById('t1-location').value.trim().toUpperCase();
+        
+            if (!item_id || !qty || !price || !location) {
+                showOutput({ error: "Fill in all fields" });
+                return;
+            }
+        
+            try {
+                const res = await api('/api/task1', {
+                    node_id,
+                    record: { item_id, qty, price, location }
+                });
+                showOutput(res);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        // 🔹 OVERRIDE Task 2
+        async function runTask2() {
+            const node_id   = document.getElementById('t2-node').value;
+            const item_id   = document.getElementById('t2-item_id').value.trim();
+            const qty       = document.getElementById('t2-qty').value;
+            const price     = document.getElementById('t2-price').value;
+            const location  = document.getElementById('t2-location').value.trim().toUpperCase();
+            const signature = document.getElementById('t2-sig').value.trim();
+        
+            if (!item_id || !qty || !price || !location || !signature) {
+                showOutput({ error: "Fill in all fields including signature" });
+                return;
+            }
+        
+            try {
+                const res = await api('/api/task2', {
+                    node_id,
+                    record: { item_id, qty, price, location },
+                    signature
+                });
+                showOutput(res);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        // 🔹 OVERRIDE Task 1 + 2
+        async function runTask12() {
+            const node_id  = document.getElementById('t12-node').value;
+            const item_id  = document.getElementById('t12-item_id').value.trim();
+            const qty      = document.getElementById('t12-qty').value;
+            const price    = document.getElementById('t12-price').value;
+            const location = document.getElementById('t12-location').value.trim().toUpperCase();
+        
+            if (!item_id || !qty || !price || !location) {
+                showOutput({ error: "Fill in all fields" });
+                return;
+            }
+        
+            try {
+                const res = await api('/api/task1and2', {
+                    node_id,
+                    record: { item_id, qty, price, location }
+                });
+                showOutput(res);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        // 🔹 OVERRIDE Task 3
+        async function runTask3() {
+            const item_id = document.getElementById('t3-item_id').value.trim();
+        
+            if (!item_id) {
+                showOutput({ error: "Select an item ID" });
+                return;
+            }
+        
+            try {
+                const res = await api('/api/task3', { item_id });
+                showOutput(res);
+            } catch (e) {
+                showOutput({ error: e.message });
+            }
+        }
+        
+        </script>
+    
+    </body> 
