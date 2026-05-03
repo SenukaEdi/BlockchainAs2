@@ -43,24 +43,10 @@ Record is stored in all node JSON files
 Implemented using:
 task1and2() (or equivalent combined function)
 
+Although Tasks 1 and 2 are specified separately, they were also integrated into a combined workflow to simulate a real-world record insertion lifecycle, where signing, verification, consensus, and storage occur as a single pipeline.
 
 Task 3 — Multi-Signature Query & Secure Delivery
 
 This task enables secure retrieval of inventory data.
 
-All nodes jointly sign a query result using the Harn multi-signature scheme:
-
-Partial signature:
-
-sig_i = (H(m) * r_i + s_i) mod n
-
-Aggregated signature:
-
-S = Σ sig_i mod n
-Implemented using:
-generate_partial_signature()
-aggregate_signatures()
-verify_aggregate_signature()
-The result is then:
-Encrypted using RSA (rsa_encrypt())
-Decrypted by the requester (rsa_decrypt())
+All nodes jointly sign a query result using the Harn multi-signature scheme.
