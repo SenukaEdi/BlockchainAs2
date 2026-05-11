@@ -11,6 +11,17 @@ from dlt_system import DLTSystem
 
 app = Flask(__name__)
 
+# Always return JSON errors, never HTML error pages
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    traceback.print_exc()  # still prints to terminal for debugging
+    return jsonify({"error": str(e)}), 500
+
+@app.errorhandler(404)
+def handle_404(e):
+    return jsonify({"error": "Not found"}), 404
+
 # Single shared system instance (in-memory state + JSON-file persistence)
 system = DLTSystem()
 
