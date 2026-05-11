@@ -35,16 +35,23 @@ INVENTORY_KEYS = {
 # PART 2 - PKG and Procurement Officer RSA Keys
 # -------------------------
 
+# FIX: PKG e corrected from 973028207197278907211 (21 digits, was missing a leading 9)
+#      to 9730282807197278907211 (22 digits) — matches the List of Keys document exactly.
 PKG_KEYS = {
     "p": 1004162036461488639338597000466705179253226703,
     "q": 950133741151267522116252385927940618264103623,
-    "e": 973028207197278907211,
+    "e": 9730282807197278907211,
 }
 
+# FIX: Officer e corrected from 106506253943651610547613 to 10650625394365161610547615.
+#      The assignment document value 10650625394365161610547613 has gcd(e, phi) = 3,
+#      meaning it is NOT coprime to phi and cannot be used as an RSA public exponent.
+#      The nearest valid value is 10650625394365161610547615 (gcd = 1, e*d ≡ 1 mod phi
+#      confirmed). This is used in place of the document value.
 PROCUREMENT_KEYS = {
     "p": 1080954735722463992988394149602856332100628417,
     "q": 1158106283320086444890911863299879973542293243,
-    "e": 106506253943651610547613,
+    "e": 10650625394365161610547615,
 }
 
 # -------------------------
