@@ -254,17 +254,12 @@ tr:hover td { background: #fafafa; }
     </div>
     <nav>
 
-      <div class="nav-group-label">Part 1 — Insertion</div>
       <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1 — Sign Record</div>
       <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2 — Consensus</div>
       <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2 Combined</div>
 
-      <div class="nav-group-label">Part 2 — Retrieval</div>
       <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3 — Query</div>
     </nav>
-    <div class="sidebar-bottom">
-      <button class="btn-danger" onclick="resetSystem()">Clear All Records</button>
-    </div>
   </aside>
 
   <!-- Main -->
@@ -305,7 +300,7 @@ tr:hover td { background: #fafafa; }
           <button id="btn-t1" onclick="runTask1()">Sign Record</button>
         </div>
 
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-title">How It Works</div>
           <div class="info-box">
             <p><b>Step 1</b> — RSA keys derived: n = p×q, φ(n) = (p−1)(q−1), d = e⁻¹ mod φ(n)</p>
@@ -313,7 +308,7 @@ tr:hover td { background: #fafafa; }
             <p><b>Step 3</b> — Signature: S = H(record)^d mod n</p>
             <p><b>Step 4</b> — All nodes verify: S^e mod n == H(record)</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="log-wrap">
@@ -371,7 +366,7 @@ tr:hover td { background: #fafafa; }
           </div>
         </div>
 
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-title">PBFT Phases</div>
           <div class="info-box">
             <p><b>Pre-prepare</b> — Leader broadcasts signed record</p>
@@ -379,7 +374,7 @@ tr:hover td { background: #fafafa; }
             <p><b>Commit</b> — Each node casts ACCEPT or REJECT vote</p>
             <p><b>Decision</b> — &ge;75% ACCEPT &rarr; record stored at all nodes</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="log-wrap">
@@ -431,7 +426,7 @@ tr:hover td { background: #fafafa; }
           <button id="btn-t12" onclick="runTask12()">Sign → Consensus → Store</button>
         </div>
 
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-title">Lifecycle</div>
           <div class="info-box">
             <p><b>1.</b> Node generates RSA signature on new record</p>
@@ -439,7 +434,7 @@ tr:hover td { background: #fafafa; }
             <p><b>3.</b> PBFT vote — 75% threshold required</p>
             <p><b>4.</b> If accepted: record written to all node JSON stores</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="log-wrap">
@@ -473,7 +468,7 @@ tr:hover td { background: #fafafa; }
           <button id="btn-t3" onclick="runTask3()">Submit Query</button>
         </div>
 
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-title">Harn Multi-Signature Scheme</div>
           <div class="info-box">
             <p><b>PKG issues</b> s_i = ID_i^d_pkg mod n_pkg</p>
@@ -482,7 +477,7 @@ tr:hover td { background: #fafafa; }
             <p><b>Verify</b> S == (H(m)*R + sum(s_i)) mod n_pkg</p>
             <p><b>Encrypt</b> C = M^e_officer mod n_officer</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="log-wrap">
