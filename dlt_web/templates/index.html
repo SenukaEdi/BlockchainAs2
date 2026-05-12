@@ -255,7 +255,7 @@ tr:hover td { background: #fafafa; }
     <nav>
 
       <div class="nav-group-label">Part 1 — Insertion</div>
-      <div class="nav-item" data-section="task1" onclick="navigate(this)">Task 1 — Sign Record</div>
+      <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1 — Sign Record</div>
       <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2 — Consensus</div>
       <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2 Combined</div>
 
@@ -267,6 +267,8 @@ tr:hover td { background: #fafafa; }
     </div>
   </aside>
 
+  <!-- Main -->
+  <main id="main">
 
     <!-- Task 1 -->
     <section id="section-task1" class="section">
@@ -813,6 +815,17 @@ async function resetSystem() {
     toast('All node records cleared', 'ok');
   } catch (e) { toast(e.message, 'err'); }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const task1Tab = document.querySelector('[data-section="task1"]');
+
+  if (task1Tab) {
+    navigate(task1Tab);
+  }
+
+  loadNodes();
+  setInterval(loadNodes, 15000);
+});
 
 loadNodes();
 setInterval(loadNodes, 15000);
