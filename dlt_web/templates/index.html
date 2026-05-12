@@ -3,66 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DLT Inventory — INTE2627</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>DLT Inventory System — INTE2627</title>
 <style>
-/* ── Reset & base ─────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:        #080c10;
-  --bg2:       #0d1117;
-  --bg3:       #111820;
-  --border:    #1e2d3d;
-  --border2:   #243344;
-  --cyan:      #00d4ff;
-  --cyan2:     #00a8cc;
-  --green:     #00e676;
-  --red:       #ff4757;
-  --yellow:    #ffd32a;
-  --purple:    #c77dff;
-  --text:      #cdd6e0;
-  --text2:     #7a8fa3;
-  --text3:     #4a5a6a;
-  --mono:      'Space Mono', monospace;
-  --sans:      'Syne', sans-serif;
-  --glow-c:    0 0 20px rgba(0,212,255,0.3);
-  --glow-g:    0 0 20px rgba(0,230,118,0.3);
-}
-
-html { scroll-behavior: smooth; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  overflow-x: hidden;
+  background: #fff;
+  color: #111;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
 }
 
-/* Grid background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
+/* Layout */
+#app { display: flex; min-height: 100vh; }
 
-/* ── Layout ───────────────────────────────────────────────────── */
-#app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
-
-/* Sidebar */
 #sidebar {
-  width: 240px;
-  min-height: 100vh;
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
+  width: 200px;
+  background: #f5f5f5;
+  border-right: 1px solid #ccc;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -72,776 +30,488 @@ body::before {
   flex-shrink: 0;
 }
 
-.sidebar-logo {
-  padding: 28px 20px 20px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-logo .logo-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--cyan);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.sidebar-logo h1 {
-  font-family: var(--sans);
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
-}
-
-nav { padding: 16px 0; flex: 1; }
-
-.nav-section-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text3);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 12px 20px 6px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: all 0.15s;
+.sidebar-title {
+  padding: 16px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text2);
 }
-.nav-item:hover { background: var(--bg3); color: var(--text); }
-.nav-item.active {
-  background: rgba(0,212,255,0.07);
-  border-left-color: var(--cyan);
-  color: var(--cyan);
-}
-.nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
-
-.sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text3);
-  line-height: 1.6;
-}
-
-/* Main content */
-#main {
-  flex: 1;
-  overflow-y: auto;
-  padding: 32px;
-  max-width: 1100px;
-}
-
-/* ── Sections ─────────────────────────────────────────────────── */
-.section { display: none; animation: fadeIn 0.3s ease; }
-.section.active { display: block; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Page header */
-.page-header { margin-bottom: 28px; }
-.page-header .breadcrumb {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--cyan);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.page-header h2 {
-  font-size: 26px;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.2;
-}
-.page-header p {
-  color: var(--text2);
-  font-size: 13px;
-  margin-top: 6px;
-  line-height: 1.6;
-  max-width: 600px;
-}
-
-/* Cards */
-.card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.card-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.card-title .tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  background: rgba(0,212,255,0.1);
-  color: var(--cyan);
-  border: 1px solid rgba(0,212,255,0.2);
-  padding: 2px 8px;
-  border-radius: 3px;
-  letter-spacing: 1px;
-}
-.card-title .tag.green { background: rgba(0,230,118,0.1); color: var(--green); border-color: rgba(0,230,118,0.2); }
-.card-title .tag.yellow { background: rgba(255,211,42,0.1); color: var(--yellow); border-color: rgba(255,211,42,0.2); }
-.card-title .tag.purple { background: rgba(199,125,255,0.1); color: var(--purple); border-color: rgba(199,125,255,0.2); }
-
-/* Grid layouts */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-@media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } .grid-4 { grid-template-columns: 1fr 1fr; } }
-
-/* Stat tiles */
-.stat-tile {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 14px;
-}
-.stat-tile .stat-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text3);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.stat-tile .stat-value {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--cyan);
-}
-.stat-tile .stat-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text2);
+.sidebar-title small {
+  display: block;
+  font-weight: normal;
+  font-size: 11px;
+  color: #666;
   margin-top: 2px;
 }
 
-/* Forms */
-.form-group { margin-bottom: 14px; }
-.form-label {
-  font-family: var(--mono);
+nav { padding: 8px 0; flex: 1; }
+
+.nav-group-label {
   font-size: 10px;
-  color: var(--text2);
-  letter-spacing: 1px;
+  color: #999;
   text-transform: uppercase;
+  padding: 10px 16px 4px;
+  letter-spacing: 0.5px;
+}
+
+.nav-item {
   display: block;
-  margin-bottom: 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  border-left: 3px solid transparent;
 }
-.form-input, .form-select {
+.nav-item:hover { background: #eee; }
+.nav-item.active { background: #e8e8e8; border-left-color: #111; font-weight: bold; color: #000; }
+
+.sidebar-bottom {
+  padding: 12px 16px;
+  border-top: 1px solid #ccc;
+}
+
+#main {
+  flex: 1;
+  padding: 24px;
+  max-width: 960px;
+  overflow-y: auto;
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+h2 { font-size: 18px; margin-bottom: 4px; }
+.page-desc { color: #555; font-size: 13px; margin-bottom: 20px; }
+
+/* Cards */
+.card {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+.card-title {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Stats */
+.stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.stat-box {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-width: 130px;
+  background: #fafafa;
+}
+.stat-box .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.stat-box .stat-value { font-size: 20px; font-weight: bold; }
+
+/* Forms */
+.form-group { margin-bottom: 12px; }
+label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
+input[type=text], input[type=number], select {
   width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: 5px;
-  padding: 9px 12px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 12px;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  appearance: none;
+  padding: 7px 10px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #111;
 }
-.form-input:focus, .form-select:focus {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
-}
+input:focus, select:focus { outline: none; border-color: #555; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 /* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-family: var(--sans);
+button {
+  padding: 8px 16px;
+  border: 1px solid #111;
+  border-radius: 3px;
+  background: #111;
+  color: #fff;
   font-size: 13px;
-  font-weight: 700;
   cursor: pointer;
-  border: none;
-  transition: all 0.15s;
-  outline: none;
+  font-family: Arial, sans-serif;
 }
-.btn-primary {
-  background: var(--cyan);
-  color: var(--bg);
+button:hover { background: #333; }
+button:disabled { background: #999; border-color: #999; cursor: not-allowed; }
+button.btn-secondary { background: #fff; color: #111; }
+button.btn-secondary:hover { background: #f0f0f0; }
+button.btn-danger { background: #fff; color: #c00; border-color: #c00; font-size: 12px; width: 100%; }
+button.btn-danger:hover { background: #fef0f0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  text-align: left; padding: 7px 10px;
+  background: #f0f0f0; border: 1px solid #ddd;
+  font-size: 11px; text-transform: uppercase; color: #555;
 }
-.btn-primary:hover { background: var(--cyan2); box-shadow: var(--glow-c); }
-.btn-primary:disabled { background: var(--border2); color: var(--text3); cursor: not-allowed; box-shadow: none; }
+td { padding: 7px 10px; border: 1px solid #ddd; color: #222; }
+tr:hover td { background: #fafafa; }
 
-.btn-green { background: var(--green); color: var(--bg); }
-.btn-green:hover { filter: brightness(0.9); box-shadow: var(--glow-g); }
-
-.btn-ghost {
-  background: transparent;
-  border: 1px solid var(--border2);
-  color: var(--text2);
+/* Log */
+.log-wrap { margin-top: 16px; }
+.log-header {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #111; color: #fff;
+  padding: 6px 12px; font-size: 11px;
+  border-radius: 3px 3px 0 0;
 }
-.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
-
-.btn-danger { background: var(--red); color: #fff; }
-.btn-danger:hover { filter: brightness(0.9); }
-
-/* Spinner */
-.spinner {
-  width: 14px; height: 14px;
-  border: 2px solid rgba(8,12,16,0.3);
-  border-top-color: var(--bg);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+.log-status { font-weight: bold; }
+.log-body {
+  background: #1a1a1a; color: #ccc;
+  padding: 10px 12px;
+  font-family: monospace; font-size: 11px; line-height: 1.7;
+  max-height: 380px; overflow-y: auto;
+  border: 1px solid #111; border-top: none;
+  border-radius: 0 0 3px 3px;
   display: none;
 }
-.btn.loading .spinner { display: block; }
-.btn.loading .btn-text { opacity: 0.7; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Inventory tables */
-.inv-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
-.inv-table th {
-  text-align: left;
-  padding: 8px 10px;
-  background: var(--bg3);
-  color: var(--text3);
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-}
-.inv-table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(30,45,61,0.5);
-  color: var(--text);
-}
-.inv-table tr:last-child td { border-bottom: none; }
-.inv-table tr:hover td { background: rgba(255,255,255,0.02); }
-.inv-table td.new-row { color: var(--green); }
-
-/* Node header badge */
-.node-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px; height: 26px;
-  border-radius: 6px;
-  background: rgba(0,212,255,0.1);
-  border: 1px solid rgba(0,212,255,0.2);
-  color: var(--cyan);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-/* Log console */
-.log-console {
-  background: #020507;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.7;
-  max-height: 420px;
-  overflow-y: auto;
-  display: none;
-}
-.log-console.visible { display: block; }
-.log-console-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  border-radius: 6px 6px 0 0;
-}
-.log-console-header span {
-  font-size: 9px;
-  color: var(--text3);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.log-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.dot-r { background: #ff5f57; }
-.dot-y { background: #febc2e; }
-.dot-g { background: #28c840; }
-.log-dots { display: flex; gap: 5px; align-items: center; }
-.log-body { padding: 12px 14px; }
-
-.log-line { display: block; margin: 0; color: var(--text2); }
-.log-line.step  { color: var(--yellow); }
-.log-line.ok    { color: var(--green); }
-.log-line.err   { color: var(--red); }
-.log-line.head  { color: var(--cyan); }
-.log-line.dim   { color: var(--text3); }
-.log-line.white { color: var(--text); }
+.log-body.visible { display: block; }
+.log-line { display: block; }
+.log-line.ok   { color: #4caf50; }
+.log-line.err  { color: #f44; }
+.log-line.step { color: #ff9; }
+.log-line.head { color: #adf; }
+.log-line.dim  { color: #555; }
 
 /* Result banner */
 .result-banner {
-  border-radius: 6px;
-  padding: 16px 20px;
-  margin-top: 16px;
-  display: none;
-  animation: fadeIn 0.3s ease;
+  border-radius: 3px; padding: 14px 16px;
+  margin-top: 14px; display: none; border: 1px solid #ccc;
 }
-.result-banner.success {
-  display: block;
-  background: rgba(0,230,118,0.07);
-  border: 1px solid rgba(0,230,118,0.2);
-}
-.result-banner.failure {
-  display: block;
-  background: rgba(255,71,87,0.07);
-  border: 1px solid rgba(255,71,87,0.2);
-}
-.result-banner .rb-title {
-  font-weight: 800;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-.result-banner.success .rb-title { color: var(--green); }
-.result-banner.failure .rb-title { color: var(--red); }
-.result-kv { display: grid; grid-template-columns: 140px 1fr; gap: 4px 12px; font-family: var(--mono); font-size: 11px; }
-.result-kv .rk { color: var(--text3); }
-.result-kv .rv { color: var(--text); word-break: break-all; }
-.result-kv .rv.highlight { color: var(--cyan); }
-.result-kv .rv.ok  { color: var(--green); }
-.result-kv .rv.err { color: var(--red); }
+.result-banner.success { display: block; background: #f0fff0; border-color: #4caf50; }
+.result-banner.failure { display: block; background: #fff0f0; border-color: #f44336; }
+.result-title { font-weight: bold; margin-bottom: 10px; font-size: 13px; }
+.result-banner.success .result-title { color: #2e7d32; }
+.result-banner.failure .result-title { color: #c62828; }
+
+.result-kv { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; font-size: 12px; font-family: monospace; }
+.result-kv .rk { color: #888; }
+.result-kv .rv { color: #111; word-break: break-all; }
+.result-kv .rv.ok  { color: #2e7d32; }
+.result-kv .rv.err { color: #c62828; }
+.result-kv .rv.hl  { color: #1565c0; }
 
 /* Vote chips */
-.vote-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.vote-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .vote-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
+  padding: 3px 10px; border-radius: 3px;
+  font-size: 11px; font-family: monospace; font-weight: bold; border: 1px solid;
 }
-.vote-chip.accept { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
-.vote-chip.reject { background: rgba(255,71,87,0.12); color: var(--red); border: 1px solid rgba(255,71,87,0.25); }
-
-/* Divider */
-.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-
-/* Toast */
-#toast {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  pointer-events: none;
-}
-.toast-item {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-left: 3px solid var(--cyan);
-  border-radius: 6px;
-  padding: 10px 16px;
-  font-size: 12px;
-  color: var(--text);
-  max-width: 280px;
-  animation: slideUp 0.25s ease;
-  pointer-events: all;
-}
-.toast-item.ok { border-left-color: var(--green); }
-.toast-item.err { border-left-color: var(--red); }
-@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Scrollbars */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+.vote-chip.accept { background: #f0fff0; color: #2e7d32; border-color: #4caf50; }
+.vote-chip.reject { background: #fff0f0; color: #c62828; border-color: #f44336; }
 
 /* Key display */
 .key-display {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text3);
-  word-break: break-all;
-  line-height: 1.6;
+  font-family: monospace; font-size: 10px; color: #888;
+  word-break: break-all; line-height: 1.7;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;
 }
-.key-display .kd-label { color: var(--cyan); }
+
+/* Info box */
+.info-box {
+  background: #f9f9f9; border: 1px solid #ddd;
+  border-radius: 3px; padding: 12px 14px;
+  font-size: 12px; color: #444; line-height: 1.9;
+}
+.info-box p { margin-bottom: 2px; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 20px; right: 20px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 6px;
+}
+.toast-item {
+  background: #111; color: #fff;
+  border-radius: 3px; padding: 8px 14px;
+  font-size: 12px; max-width: 260px;
+}
+.toast-item.ok  { background: #2e7d32; }
+.toast-item.err { background: #c62828; }
 </style>
 </head>
 <body>
 
 <div id="app">
-  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+
+  <!-- Sidebar -->
   <aside id="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-tag">INTE2627</div>
-      <h1>DLT Inventory<br>System</h1>
+    <div class="sidebar-title">
+      DLT Inventory System
+      <small>INTE2627 Assignment 2</small>
     </div>
-
     <nav>
-      <div class="nav-section-label">Overview</div>
-      <div class="nav-item active" data-section="dashboard" onclick="navigate(this)">
-        <span class="icon">⬡</span> Dashboard
-      </div>
-      <div class="nav-item" data-section="nodes" onclick="navigate(this)">
-        <span class="icon">◈</span> Inventory Nodes
-      </div>
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-item active" data-section="dashboard" onclick="navigate(this)">Dashboard</div>
+      <div class="nav-item" data-section="nodes" onclick="navigate(this)">Inventory Nodes</div>
 
-      <div class="nav-section-label">Part 1 — Insertion</div>
-      <div class="nav-item" data-section="task1" onclick="navigate(this)">
-        <span class="icon">✦</span> Task 1 — Sign Record
-      </div>
-      <div class="nav-item" data-section="task2" onclick="navigate(this)">
-        <span class="icon">◎</span> Task 2 — Consensus
-      </div>
-      <div class="nav-item" data-section="task12" onclick="navigate(this)">
-        <span class="icon">⟳</span> Tasks 1+2 Combined
-      </div>
+      <div class="nav-group-label">Part 1 — Insertion</div>
+      <div class="nav-item" data-section="task1" onclick="navigate(this)">Task 1 — Sign Record</div>
+      <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2 — Consensus</div>
+      <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2 Combined</div>
 
-      <div class="nav-section-label">Part 2 — Retrieval</div>
-      <div class="nav-item" data-section="task3" onclick="navigate(this)">
-        <span class="icon">⬡</span> Task 3 — Query
-      </div>
+      <div class="nav-group-label">Part 2 — Retrieval</div>
+      <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3 — Query</div>
     </nav>
-
-    <div style="padding:12px 12px 0;">
-      <button class="btn btn-danger" style="width:100%;font-size:11px;padding:8px;" onclick="resetSystem()">⚠ Clear All Records</button>
-    </div>
-    <div class="sidebar-footer">
-      Assignment 2 · Sem 1 2026<br>
-      Python · Flask · RSA · PBFT<br>
-      Harn Multi-Sig
+    <div class="sidebar-bottom">
+      <button class="btn-danger" onclick="resetSystem()">Clear All Records</button>
     </div>
   </aside>
 
-  <!-- ── Main content ────────────────────────────────────────── -->
+  <!-- Main -->
   <main id="main">
 
-    <!-- ── Dashboard ─────────────────────────────────────────── -->
+    <!-- Dashboard -->
     <section id="section-dashboard" class="section active">
-      <div class="page-header">
-        <div class="breadcrumb">Overview</div>
-        <h2>System Dashboard</h2>
-        <p>Live status of all inventory nodes, cryptographic parameters, and system health.</p>
-      </div>
-
-      <div id="stat-tiles" class="grid-4" style="margin-bottom:20px;"></div>
-
+      <h2>System Dashboard</h2>
+      <p class="page-desc">Live status of all inventory nodes and system overview.</p>
+      <div class="stat-row" id="stat-tiles"></div>
       <div id="dashboard-nodes"></div>
     </section>
 
-    <!-- ── Nodes ──────────────────────────────────────────────── -->
+    <!-- Nodes -->
     <section id="section-nodes" class="section">
-      <div class="page-header">
-        <div class="breadcrumb">Part 1</div>
-        <h2>Inventory Nodes</h2>
-        <p>Full view of each node's local inventory ledger and RSA public key parameters.</p>
-      </div>
+      <h2>Inventory Nodes</h2>
+      <p class="page-desc">Each node's local inventory ledger and RSA public key parameters.</p>
       <div id="nodes-full"></div>
     </section>
 
-    <!-- ── Task 1 ─────────────────────────────────────────────── -->
+    <!-- Task 1 -->
     <section id="section-task1" class="section">
-      <div class="page-header">
-        <div class="breadcrumb">Part 1 · Task 1</div>
-        <h2>Digital Signature Authentication</h2>
-        <p>Select an originating node, enter a new inventory record, and sign it with that node's RSA private key. All other nodes will verify the signature.</p>
-      </div>
+      <h2>Task 1 — Digital Signature Authentication</h2>
+      <p class="page-desc">Select a node, enter a new inventory record, and sign it with that node's RSA private key. All other nodes verify the signature.</p>
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">New Record <span class="tag">RSA SIGN</span></div>
-          </div>
-
+          <div class="card-title">New Record</div>
           <div class="form-group">
-            <label class="form-label">Originating Node</label>
-            <select id="t1-node" class="form-select"></select>
+            <label>Originating Node</label>
+            <select id="t1-node"></select>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Item ID</label>
-              <input id="t1-item_id" class="form-input" placeholder="e.g. 004">
+              <label>Item ID</label>
+              <input id="t1-item_id" type="text" placeholder="e.g. 004">
             </div>
             <div class="form-group">
-              <label class="form-label">Location</label>
-              <input id="t1-location" class="form-input" placeholder="e.g. A">
+              <label>Location</label>
+              <input id="t1-location" type="text" placeholder="e.g. A">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Quantity</label>
-              <input id="t1-qty" class="form-input" type="number" placeholder="e.g. 12">
+              <label>Quantity</label>
+              <input id="t1-qty" type="number" placeholder="e.g. 12">
             </div>
             <div class="form-group">
-              <label class="form-label">Price</label>
-              <input id="t1-price" class="form-input" type="number" placeholder="e.g. 18">
+              <label>Price</label>
+              <input id="t1-price" type="number" placeholder="e.g. 18">
             </div>
           </div>
-
-          <button class="btn btn-primary" id="btn-t1" onclick="runTask1()">
-            <div class="spinner"></div>
-            <span class="btn-text">Sign Record</span>
-          </button>
+          <button id="btn-t1" onclick="runTask1()">Sign Record</button>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">How It Works <span class="tag">INFO</span></div>
-          </div>
-          <div style="font-size:12px; color:var(--text2); line-height:1.8;">
-            <p style="margin-bottom:8px;"><span style="color:var(--cyan);">Step 1</span> — RSA key components are derived: n = p×q, φ(n) = (p−1)(q−1), d = e⁻¹ mod φ(n)</p>
-            <p style="margin-bottom:8px;"><span style="color:var(--cyan);">Step 2</span> — Record string is SHA-256 hashed, reduced mod n: H(record)</p>
-            <p style="margin-bottom:8px;"><span style="color:var(--cyan);">Step 3</span> — Signature computed: S = H(record)^d mod n</p>
-            <p><span style="color:var(--cyan);">Step 4</span> — All nodes verify: S^e mod n == H(record) mod n</p>
+          <div class="card-title">How It Works</div>
+          <div class="info-box">
+            <p><b>Step 1</b> — RSA keys derived: n = p×q, φ(n) = (p−1)(q−1), d = e⁻¹ mod φ(n)</p>
+            <p><b>Step 2</b> — Record hashed: H(record) = SHA-256 mod n</p>
+            <p><b>Step 3</b> — Signature: S = H(record)^d mod n</p>
+            <p><b>Step 4</b> — All nodes verify: S^e mod n == H(record)</p>
           </div>
         </div>
       </div>
 
-      <div class="log-console" id="t1-log">
-        <div class="log-console-header">
-          <div class="log-dots"><span class="log-dot dot-r"></span><span class="log-dot dot-y"></span><span class="log-dot dot-g"></span></div>
-          <span>TASK 1 — EXECUTION LOG</span>
-          <span id="t1-log-status">—</span>
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 1 — Execution Log</span>
+          <span class="log-status" id="t1-log-status">—</span>
         </div>
         <div class="log-body" id="t1-log-body"></div>
       </div>
-
       <div class="result-banner" id="t1-result">
-        <div class="rb-title" id="t1-result-title"></div>
+        <div class="result-title" id="t1-result-title"></div>
         <div class="result-kv" id="t1-result-kv"></div>
       </div>
     </section>
 
-    <!-- ── Task 2 ─────────────────────────────────────────────── -->
+    <!-- Task 2 -->
     <section id="section-task2" class="section">
-      <div class="page-header">
-        <div class="breadcrumb">Part 1 · Task 2</div>
-        <h2>Consensus Protocol (PBFT)</h2>
-        <p>Enter a record and an existing signature. All inventory nodes vote on whether to accept it. Requires 75% supermajority.</p>
-      </div>
+      <h2>Task 2 — Consensus Protocol (PBFT)</h2>
+      <p class="page-desc">Enter a record and signature. All inventory nodes vote on whether to accept it. Requires 75% supermajority.</p>
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Consensus Input <span class="tag">PBFT</span></div>
-          </div>
-
+          <div class="card-title">Consensus Input</div>
           <div class="form-group">
-            <label class="form-label">Originating Node</label>
-            <select id="t2-node" class="form-select"></select>
+            <label>Originating Node</label>
+            <select id="t2-node"></select>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Item ID</label>
-              <input id="t2-item_id" class="form-input" placeholder="e.g. 004">
+              <label>Item ID</label>
+              <input id="t2-item_id" type="text" placeholder="e.g. 004">
             </div>
             <div class="form-group">
-              <label class="form-label">Location</label>
-              <input id="t2-location" class="form-input" placeholder="e.g. A">
+              <label>Location</label>
+              <input id="t2-location" type="text" placeholder="e.g. A">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Quantity</label>
-              <input id="t2-qty" class="form-input" type="number" placeholder="e.g. 12">
+              <label>Quantity</label>
+              <input id="t2-qty" type="number" placeholder="e.g. 12">
             </div>
             <div class="form-group">
-              <label class="form-label">Price</label>
-              <input id="t2-price" class="form-input" type="number" placeholder="e.g. 18">
+              <label>Price</label>
+              <input id="t2-price" type="number" placeholder="e.g. 18">
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Signature (integer from Task 1)</label>
-            <input id="t2-sig" class="form-input" placeholder="Paste signature integer here">
+            <label>Signature (integer from Task 1)</label>
+            <input id="t2-sig" type="text" placeholder="Paste signature integer here">
           </div>
-
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-primary" id="btn-t2" onclick="runTask2()">
-              <div class="spinner"></div>
-              <span class="btn-text">Run Consensus</span>
-            </button>
-            <button class="btn btn-ghost" onclick="autofillT2()" title="Auto-sign and run">⚡ Auto-sign</button>
+          <div class="btn-row">
+            <button id="btn-t2" onclick="runTask2()">Run Consensus</button>
+            <button class="btn-secondary" onclick="autofillT2()">Auto-fill from Task 1</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">PBFT Phases <span class="tag">INFO</span></div>
-          </div>
-          <div style="font-size:12px; color:var(--text2); line-height:1.8;">
-            <p style="margin-bottom:8px;"><span style="color:var(--yellow);">Pre-prepare</span> — Leader broadcasts signed record</p>
-            <p style="margin-bottom:8px;"><span style="color:var(--yellow);">Prepare</span> — Each node verifies RSA signature independently</p>
-            <p style="margin-bottom:8px;"><span style="color:var(--yellow);">Commit</span> — Each node casts ACCEPT or REJECT vote</p>
-            <p><span style="color:var(--yellow);">Decision</span> — ≥75% ACCEPT → record stored at all nodes</p>
+          <div class="card-title">PBFT Phases</div>
+          <div class="info-box">
+            <p><b>Pre-prepare</b> — Leader broadcasts signed record</p>
+            <p><b>Prepare</b> — Each node verifies RSA signature independently</p>
+            <p><b>Commit</b> — Each node casts ACCEPT or REJECT vote</p>
+            <p><b>Decision</b> — &ge;75% ACCEPT &rarr; record stored at all nodes</p>
           </div>
         </div>
       </div>
 
-      <div class="log-console" id="t2-log">
-        <div class="log-console-header">
-          <div class="log-dots"><span class="log-dot dot-r"></span><span class="log-dot dot-y"></span><span class="log-dot dot-g"></span></div>
-          <span>TASK 2 — EXECUTION LOG</span>
-          <span id="t2-log-status">—</span>
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 2 — Execution Log</span>
+          <span class="log-status" id="t2-log-status">—</span>
         </div>
         <div class="log-body" id="t2-log-body"></div>
       </div>
-
       <div class="result-banner" id="t2-result">
-        <div class="rb-title" id="t2-result-title"></div>
+        <div class="result-title" id="t2-result-title"></div>
         <div class="vote-row" id="t2-votes"></div>
-        <div class="result-kv" id="t2-result-kv" style="margin-top:12px;"></div>
+        <div class="result-kv" id="t2-result-kv" style="margin-top:10px;"></div>
       </div>
     </section>
 
-    <!-- ── Tasks 1+2 ──────────────────────────────────────────── -->
+    <!-- Tasks 1+2 Combined -->
     <section id="section-task12" class="section">
-      <div class="page-header">
-        <div class="breadcrumb">Part 1 · Tasks 1+2</div>
-        <h2>Full Record Insertion Lifecycle</h2>
-        <p>One-click flow: sign a new record, then immediately run consensus across all nodes. The complete Part 1 workflow.</p>
-      </div>
+      <h2>Tasks 1+2 Combined — Full Record Insertion</h2>
+      <p class="page-desc">Sign a new record then immediately run consensus. The complete Part 1 workflow in one step.</p>
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">New Record <span class="tag green">SIGN + CONSENSUS</span></div>
-          </div>
-
+          <div class="card-title">New Record</div>
           <div class="form-group">
-            <label class="form-label">Originating Node</label>
-            <select id="t12-node" class="form-select"></select>
+            <label>Originating Node</label>
+            <select id="t12-node"></select>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Item ID</label>
-              <input id="t12-item_id" class="form-input" placeholder="e.g. 004">
+              <label>Item ID</label>
+              <input id="t12-item_id" type="text" placeholder="e.g. 004">
             </div>
             <div class="form-group">
-              <label class="form-label">Location</label>
-              <input id="t12-location" class="form-input" placeholder="e.g. A">
+              <label>Location</label>
+              <input id="t12-location" type="text" placeholder="e.g. A">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Quantity</label>
-              <input id="t12-qty" class="form-input" type="number" placeholder="e.g. 12">
+              <label>Quantity</label>
+              <input id="t12-qty" type="number" placeholder="e.g. 12">
             </div>
             <div class="form-group">
-              <label class="form-label">Price</label>
-              <input id="t12-price" class="form-input" type="number" placeholder="e.g. 18">
+              <label>Price</label>
+              <input id="t12-price" type="number" placeholder="e.g. 18">
             </div>
           </div>
-
-          <button class="btn btn-green" id="btn-t12" onclick="runTask12()">
-            <div class="spinner"></div>
-            <span class="btn-text">Sign → Consensus → Store</span>
-          </button>
+          <button id="btn-t12" onclick="runTask12()">Sign → Consensus → Store</button>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Lifecycle Flow <span class="tag green">INFO</span></div>
-          </div>
-          <div style="font-size:12px; color:var(--text2); line-height:1.8;">
-            <p style="margin-bottom:6px;"><span style="color:var(--green);">①</span> Node generates RSA signature on new record</p>
-            <p style="margin-bottom:6px;"><span style="color:var(--green);">②</span> All nodes verify the signature</p>
-            <p style="margin-bottom:6px;"><span style="color:var(--green);">③</span> PBFT vote: 75% threshold required</p>
-            <p><span style="color:var(--green);">④</span> If accepted: record written to all node JSON stores</p>
+          <div class="card-title">Lifecycle</div>
+          <div class="info-box">
+            <p><b>1.</b> Node generates RSA signature on new record</p>
+            <p><b>2.</b> All nodes verify the signature</p>
+            <p><b>3.</b> PBFT vote — 75% threshold required</p>
+            <p><b>4.</b> If accepted: record written to all node JSON stores</p>
           </div>
         </div>
       </div>
 
-      <div class="log-console" id="t12-log">
-        <div class="log-console-header">
-          <div class="log-dots"><span class="log-dot dot-r"></span><span class="log-dot dot-y"></span><span class="log-dot dot-g"></span></div>
-          <span>TASKS 1+2 — EXECUTION LOG</span>
-          <span id="t12-log-status">—</span>
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Tasks 1+2 — Execution Log</span>
+          <span class="log-status" id="t12-log-status">—</span>
         </div>
         <div class="log-body" id="t12-log-body"></div>
       </div>
-
       <div class="result-banner" id="t12-result">
-        <div class="rb-title" id="t12-result-title"></div>
+        <div class="result-title" id="t12-result-title"></div>
         <div class="vote-row" id="t12-votes"></div>
-        <div class="result-kv" id="t12-result-kv" style="margin-top:12px;"></div>
+        <div class="result-kv" id="t12-result-kv" style="margin-top:10px;"></div>
       </div>
     </section>
 
-    <!-- ── Task 3 ─────────────────────────────────────────────── -->
+    <!-- Task 3 -->
     <section id="section-task3" class="section">
-      <div class="page-header">
-        <div class="breadcrumb">Part 2 · Task 3</div>
-        <h2>Multi-Signature Query &amp; Secure Delivery</h2>
-        <p>Query an item's quantity. All nodes jointly sign the result using the Harn identity-based scheme. The PKG encrypts the response with the Procurement Officer's RSA public key.</p>
-      </div>
+      <h2>Task 3 — Multi-Signature Query &amp; Secure Delivery</h2>
+      <p class="page-desc">Query an item's quantity. All nodes jointly sign the result using the Harn identity-based scheme. The PKG encrypts the response with the Procurement Officer's RSA public key.</p>
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Query Request <span class="tag purple">HARN MULTI-SIG</span></div>
-          </div>
-
+          <div class="card-title">Query Request</div>
           <div class="form-group">
-            <label class="form-label">Item ID to Query</label>
-            <select id="t3-item_id" class="form-select">
+            <label>Item ID to Query</label>
+            <select id="t3-item_id">
               <option value="">— select item —</option>
             </select>
           </div>
-
-          <button class="btn btn-primary" id="btn-t3" onclick="runTask3()" style="background:var(--purple);">
-            <div class="spinner"></div>
-            <span class="btn-text">Submit Query</span>
-          </button>
+          <button id="btn-t3" onclick="runTask3()">Submit Query</button>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Harn Scheme <span class="tag purple">INFO</span></div>
-          </div>
-          <div style="font-size:12px; color:var(--text2); line-height:1.8;">
-            <p style="margin-bottom:6px;"><span style="color:var(--purple);">PKG issues</span> s_i = ID_i^d_pkg mod n_pkg</p>
-            <p style="margin-bottom:6px;"><span style="color:var(--purple);">Each node signs</span> sig_i = (H(m)·r_i + s_i) mod n_pkg</p>
-            <p style="margin-bottom:6px;"><span style="color:var(--purple);">Aggregate</span> S = Σ sig_i mod n_pkg</p>
-            <p style="margin-bottom:6px;"><span style="color:var(--purple);">Verify</span> S == (H(m)·R + Σs_i) mod n_pkg</p>
-            <p><span style="color:var(--purple);">Encrypt</span> C = M^e_officer mod n_officer</p>
+          <div class="card-title">Harn Multi-Signature Scheme</div>
+          <div class="info-box">
+            <p><b>PKG issues</b> s_i = ID_i^d_pkg mod n_pkg</p>
+            <p><b>Each node signs</b> sig_i = (H(m) * r_i + s_i) mod n_pkg</p>
+            <p><b>Aggregate</b> S = sum(sig_i) mod n_pkg</p>
+            <p><b>Verify</b> S == (H(m)*R + sum(s_i)) mod n_pkg</p>
+            <p><b>Encrypt</b> C = M^e_officer mod n_officer</p>
           </div>
         </div>
       </div>
 
-      <div class="log-console" id="t3-log">
-        <div class="log-console-header">
-          <div class="log-dots"><span class="log-dot dot-r"></span><span class="log-dot dot-y"></span><span class="log-dot dot-g"></span></div>
-          <span>TASK 3 — EXECUTION LOG</span>
-          <span id="t3-log-status">—</span>
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 3 — Execution Log</span>
+          <span class="log-status" id="t3-log-status">—</span>
         </div>
         <div class="log-body" id="t3-log-body"></div>
       </div>
-
       <div class="result-banner" id="t3-result">
-        <div class="rb-title" id="t3-result-title"></div>
+        <div class="result-title" id="t3-result-title"></div>
         <div class="result-kv" id="t3-result-kv"></div>
       </div>
     </section>
@@ -849,14 +519,11 @@ nav { padding: 16px 0; flex: 1; }
   </main>
 </div>
 
-<!-- Toast container -->
 <div id="toast"></div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────────
 let nodesData = {};
 
-// ── Navigation ─────────────────────────────────────────────────────
 function navigate(el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -864,16 +531,14 @@ function navigate(el) {
   document.getElementById('section-' + el.dataset.section).classList.add('active');
 }
 
-// ── Toast ──────────────────────────────────────────────────────────
 function toast(msg, type = '') {
   const t = document.createElement('div');
   t.className = 'toast-item' + (type ? ' ' + type : '');
   t.textContent = msg;
   document.getElementById('toast').appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+  setTimeout(() => t.remove(), 3000);
 }
 
-// ── API helper ─────────────────────────────────────────────────────
 async function api(path, body = null) {
   const opts = body
     ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
@@ -881,17 +546,15 @@ async function api(path, body = null) {
   const r = await fetch(path, opts);
   const ct = r.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
-    // Flask returned an HTML error page — surface the HTTP status
-    throw new Error(`Server error ${r.status}: ${r.statusText}. Check the Flask terminal for a Python traceback.`);
+    throw new Error(`Server error ${r.status}: ${r.statusText}. Check the Flask terminal.`);
   }
   const data = await r.json();
   if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
   return data;
 }
 
-// ── Log renderer ──────────────────────────────────────────────────
-function renderLogs(containerId, logs, statusId, statusText, statusOk) {
-  const el = document.getElementById(containerId);
+function renderLogs(bodyId, logs, statusId, statusText, statusOk) {
+  const el = document.getElementById(bodyId);
   const st = document.getElementById(statusId);
   el.innerHTML = '';
   logs.forEach(line => {
@@ -900,27 +563,18 @@ function renderLogs(containerId, logs, statusId, statusText, statusOk) {
     if (line.includes('[STEP') || line.includes('TASK') || line.includes('MULTI-SIG')) span.classList.add('step');
     else if (line.includes('✓')) span.classList.add('ok');
     else if (line.includes('✗') || line.includes('ERROR')) span.classList.add('err');
-    else if (line.includes('═══') || line.includes('===')) span.classList.add('head');
+    else if (line.includes('===')) span.classList.add('head');
     else if (line.trim() === '') span.classList.add('dim');
-    else span.classList.add('white');
     span.textContent = line;
     el.appendChild(span);
     el.appendChild(document.createElement('br'));
   });
   st.textContent = statusText;
-  st.style.color = statusOk ? 'var(--green)' : 'var(--red)';
-  el.closest('.log-console').classList.add('visible');
+  st.style.color = statusOk ? '#4caf50' : '#f44336';
+  el.classList.add('visible');
   el.scrollTop = el.scrollHeight;
 }
 
-// ── Button loading state ───────────────────────────────────────────
-function setLoading(id, loading) {
-  const btn = document.getElementById(id);
-  btn.classList.toggle('loading', loading);
-  btn.disabled = loading;
-}
-
-// ── Load nodes ─────────────────────────────────────────────────────
 async function loadNodes() {
   try {
     const data = await api('/api/nodes');
@@ -940,7 +594,7 @@ function populateNodeSelects() {
     sel.innerHTML = '';
     ids.forEach(id => {
       const opt = document.createElement('option');
-      opt.value = id; opt.textContent = `Inventory ${id}`;
+      opt.value = id; opt.textContent = 'Inventory ' + id;
       sel.appendChild(opt);
     });
     if (prev && ids.includes(prev)) sel.value = prev;
@@ -950,7 +604,6 @@ function populateNodeSelects() {
 function populateItemSelect() {
   const sel = document.getElementById('t3-item_id');
   const prev = sel.value;
-  // Collect unique item IDs from the first node
   const firstNode = Object.values(nodesData)[0];
   if (!firstNode) return;
   const ids = firstNode.records.map(r => r.item_id);
@@ -967,54 +620,35 @@ function populateItemSelect() {
   if (prev) sel.value = prev;
 }
 
-// ── Dashboard ──────────────────────────────────────────────────────
 function renderDashboard() {
   const nodeIds = Object.keys(nodesData);
   const totalRecords = Object.values(nodesData).reduce((s,n) => s + n.records.length, 0);
 
   document.getElementById('stat-tiles').innerHTML = `
-    <div class="stat-tile"><div class="stat-label">Nodes Online</div><div class="stat-value">${nodeIds.length}</div><div class="stat-sub">All active</div></div>
-    <div class="stat-tile"><div class="stat-label">Total Records</div><div class="stat-value" style="color:${totalRecords===0?'var(--text3)':'var(--cyan)'}">${totalRecords}</div><div class="stat-sub">${totalRecords===0?'Add via Tasks 1+2':'Across all nodes'}</div></div>
-    <div class="stat-tile"><div class="stat-label">Consensus</div><div class="stat-value" style="color:var(--green)">PBFT</div><div class="stat-sub">75% threshold</div></div>
-    <div class="stat-tile"><div class="stat-label">Multi-Sig</div><div class="stat-value" style="color:var(--purple)">HARN</div><div class="stat-sub">Identity-based</div></div>
+    <div class="stat-box"><div class="stat-label">Nodes Online</div><div class="stat-value">${nodeIds.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Total Records</div><div class="stat-value">${totalRecords}</div></div>
+    <div class="stat-box"><div class="stat-label">Consensus</div><div class="stat-value" style="font-size:15px;padding-top:3px;">PBFT</div></div>
+    <div class="stat-box"><div class="stat-label">Multi-Sig</div><div class="stat-value" style="font-size:15px;padding-top:3px;">Harn</div></div>
   `;
 
-  const totalRecordsAll = Object.values(nodesData).reduce((s,n) => s + n.records.length, 0);
   const wrap = document.getElementById('dashboard-nodes');
-  if (totalRecordsAll === 0) {
-    wrap.innerHTML = `<div class="card" style="text-align:center;padding:40px;">
-      <div style="font-size:32px;margin-bottom:12px;">◈</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">No records yet</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:20px;">Use <b>Tasks 1+2 Combined</b> in the sidebar to add your first inventory record.</div>
-      <button class="btn btn-primary" onclick="navigate(document.querySelector('[data-section=task12]'))">Add First Record →</button>
+  if (totalRecords === 0) {
+    wrap.innerHTML = `<div class="card" style="text-align:center;padding:30px;">
+      <p style="margin-bottom:12px;color:#555;">No records yet. Use <b>Tasks 1+2 Combined</b> to add your first inventory record.</p>
+      <button onclick="navigate(document.querySelector('[data-section=task12]'))">Add First Record</button>
     </div>`;
     return;
   }
   wrap.innerHTML = '<div class="grid-2">' + nodeIds.map(nid => {
     const node = nodesData[nid];
     const rows = node.records.length === 0
-      ? `<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:16px;">No records on this node</td></tr>`
-      : node.records.map(r =>
-          `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`
-        ).join('');
-    return `
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="node-badge">${nid}</span>
-            Inventory ${nid}
-            <span class="tag">${node.records.length} RECORDS</span>
-          </div>
-        </div>
-        <table class="inv-table">
-          <thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-        <div class="key-display" style="margin-top:12px;">
-          <span class="kd-label">e: </span>${node.public_key.e}<br>
-          <span class="kd-label">n: </span>${node.public_key.n.slice(0,40)}…
-        </div>
-      </div>`;
+      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records</td></tr>`
+      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
+    return `<div class="card">
+      <div class="card-title">Node ${nid} &nbsp;<small style="font-weight:normal;color:#888;">${node.records.length} record(s)</small></div>
+      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="key-display"><b>e:</b> ${node.public_key.e}<br><b>n:</b> ${node.public_key.n.slice(0,50)}...</div>
+    </div>`;
   }).join('') + '</div>';
 }
 
@@ -1023,82 +657,60 @@ function renderNodesFull() {
   wrap.innerHTML = Object.keys(nodesData).map(nid => {
     const node = nodesData[nid];
     const rows = node.records.length === 0
-      ? `<tr><td colspan="4" style="color:var(--text3);text-align:center;padding:16px;">No records — add one via Tasks 1+2</td></tr>`
-      : node.records.map(r =>
-          `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`
-        ).join('');
-    return `
-      <div class="card" style="margin-bottom:20px;">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="node-badge">${nid}</span>
-            Inventory Node ${nid}
-            <span class="tag">${node.records.length} RECORDS</span>
-          </div>
-        </div>
-        <table class="inv-table">
-          <thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-        <hr class="divider">
-        <div class="key-display">
-          <span class="kd-label">Public exponent (e): </span>${node.public_key.e}<br>
-          <span class="kd-label">Modulus (n): </span>${node.public_key.n}
-        </div>
-      </div>`;
+      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records — add via Tasks 1+2</td></tr>`
+      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
+    return `<div class="card">
+      <div class="card-title">Inventory Node ${nid}</div>
+      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="key-display"><b>Public exponent (e):</b> ${node.public_key.e}<br><b>Modulus (n):</b> ${node.public_key.n}</div>
+    </div>`;
   }).join('');
 }
 
-// ── Task 1 ─────────────────────────────────────────────────────────
 async function runTask1() {
   const node_id  = document.getElementById('t1-node').value;
   const item_id  = document.getElementById('t1-item_id').value.trim();
   const qty      = document.getElementById('t1-qty').value;
   const price    = document.getElementById('t1-price').value;
   const location = document.getElementById('t1-location').value.trim().toUpperCase();
-
   if (!item_id || !qty || !price || !location) { toast('Fill in all fields', 'err'); return; }
 
-  setLoading('btn-t1', true);
+  const btn = document.getElementById('btn-t1');
+  btn.disabled = true; btn.textContent = 'Signing...';
   try {
     const res = await api('/api/task1', { node_id, record: { item_id, qty, price, location } });
     renderLogs('t1-log-body', res.logs, 't1-log-status',
       res.all_valid ? '✓ ALL VERIFIED' : '✗ FAILED', res.all_valid);
-
     const rb = document.getElementById('t1-result');
     rb.className = 'result-banner ' + (res.all_valid ? 'success' : 'failure');
     document.getElementById('t1-result-title').textContent =
       res.all_valid ? '✓ Signature valid — all nodes verified' : '✗ Signature verification failed';
-
     document.getElementById('t1-result-kv').innerHTML = `
       <span class="rk">Node</span><span class="rv">${res.node_id}</span>
       <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
-      <span class="rk">Signature (S)</span><span class="rv highlight">${res.signature.slice(0,60)}…</span>
+      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
       ${Object.entries(res.verifications).map(([k,v]) =>
         `<span class="rk">Node ${k} verify</span><span class="rv ${v?'ok':'err'}">${v ? '✓ VALID' : '✗ INVALID'}</span>`
       ).join('')}
     `;
-
-    // Store sig for task 2 autofill
     window._lastT1 = { node_id, record: res.record, signature: res.signature };
     toast('Record signed successfully', 'ok');
   } catch (e) {
     toast(e.message, 'err');
     renderLogs('t1-log-body', [e.message], 't1-log-status', '✗ ERROR', false);
-  } finally { setLoading('btn-t1', false); }
+  } finally { btn.disabled = false; btn.textContent = 'Sign Record'; }
 }
 
-// ── Task 2 ─────────────────────────────────────────────────────────
 function autofillT2() {
-  if (!window._lastT1) { toast('Run Task 1 first to get a signature', 'err'); return; }
+  if (!window._lastT1) { toast('Run Task 1 first', 'err'); return; }
   const { node_id, record, signature } = window._lastT1;
-  document.getElementById('t2-node').value    = node_id;
-  document.getElementById('t2-item_id').value = record.item_id;
-  document.getElementById('t2-qty').value     = record.qty;
-  document.getElementById('t2-price').value   = record.price;
-  document.getElementById('t2-location').value= record.location;
-  document.getElementById('t2-sig').value     = signature;
-  toast('Fields auto-filled from Task 1', 'ok');
+  document.getElementById('t2-node').value     = node_id;
+  document.getElementById('t2-item_id').value  = record.item_id;
+  document.getElementById('t2-qty').value      = record.qty;
+  document.getElementById('t2-price').value    = record.price;
+  document.getElementById('t2-location').value = record.location;
+  document.getElementById('t2-sig').value      = signature;
+  toast('Fields filled from Task 1', 'ok');
 }
 
 async function runTask2() {
@@ -1108,118 +720,101 @@ async function runTask2() {
   const price     = document.getElementById('t2-price').value;
   const location  = document.getElementById('t2-location').value.trim().toUpperCase();
   const signature = document.getElementById('t2-sig').value.trim();
-
   if (!item_id || !qty || !price || !location || !signature) { toast('Fill in all fields including signature', 'err'); return; }
 
-  setLoading('btn-t2', true);
+  const btn = document.getElementById('btn-t2');
+  btn.disabled = true; btn.textContent = 'Running consensus...';
   try {
     const res = await api('/api/task2', { node_id, record: { item_id, qty, price, location }, signature });
     renderLogs('t2-log-body', res.logs, 't2-log-status',
       res.consensus_reached ? '✓ CONSENSUS REACHED' : '✗ REJECTED', res.consensus_reached);
-
     const rb = document.getElementById('t2-result');
     rb.className = 'result-banner ' + (res.consensus_reached ? 'success' : 'failure');
     document.getElementById('t2-result-title').textContent =
       res.consensus_reached ? '✓ Consensus reached — record stored at all nodes' : '✗ Consensus failed — record rejected';
-
-    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
     document.getElementById('t2-votes').innerHTML = res.votes.map(v =>
-      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">
-        ${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}
-      </div>`
+      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}</div>`
     ).join('');
-
+    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
     document.getElementById('t2-result-kv').innerHTML = `
       <span class="rk">Vote tally</span><span class="rv ${res.consensus_reached?'ok':'err'}">${accept}/${res.votes.length} ACCEPT</span>
       <span class="rk">Threshold</span><span class="rv">75% (${Math.ceil(res.votes.length*0.75)}/${res.votes.length})</span>
       <span class="rk">Decision</span><span class="rv ${res.consensus_reached?'ok':'err'}">${res.consensus_reached ? 'COMMITTED' : 'ABORTED'}</span>
     `;
-
     if (res.consensus_reached) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
     else toast('Consensus not reached', 'err');
   } catch (e) {
     toast(e.message, 'err');
     renderLogs('t2-log-body', [e.message], 't2-log-status', '✗ ERROR', false);
-  } finally { setLoading('btn-t2', false); }
+  } finally { btn.disabled = false; btn.textContent = 'Run Consensus'; }
 }
 
-// ── Tasks 1+2 ──────────────────────────────────────────────────────
 async function runTask12() {
   const node_id  = document.getElementById('t12-node').value;
   const item_id  = document.getElementById('t12-item_id').value.trim();
   const qty      = document.getElementById('t12-qty').value;
   const price    = document.getElementById('t12-price').value;
   const location = document.getElementById('t12-location').value.trim().toUpperCase();
-
   if (!item_id || !qty || !price || !location) { toast('Fill in all fields', 'err'); return; }
 
-  setLoading('btn-t12', true);
+  const btn = document.getElementById('btn-t12');
+  btn.disabled = true; btn.textContent = 'Processing...';
   try {
     const res = await api('/api/task1and2', { node_id, record: { item_id, qty, price, location } });
     const ok  = res.all_valid && res.consensus_reached;
-    renderLogs('t12-log-body', res.logs, 't12-log-status',
-      ok ? '✓ STORED' : '✗ FAILED', ok);
-
+    renderLogs('t12-log-body', res.logs, 't12-log-status', ok ? '✓ STORED' : '✗ FAILED', ok);
     const rb = document.getElementById('t12-result');
     rb.className = 'result-banner ' + (ok ? 'success' : 'failure');
     document.getElementById('t12-result-title').textContent = ok
       ? '✓ Record signed, consensus reached, stored across all nodes'
       : '✗ Pipeline failed — check log';
-
-    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
     document.getElementById('t12-votes').innerHTML = res.votes.map(v =>
-      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">
-        ${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}
-      </div>`
+      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}</div>`
     ).join('');
-
+    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
     document.getElementById('t12-result-kv').innerHTML = `
       <span class="rk">Node</span><span class="rv">${res.node_id}</span>
       <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
-      <span class="rk">Signature</span><span class="rv highlight">${res.signature.slice(0,60)}…</span>
+      <span class="rk">Signature</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
       <span class="rk">Sig Verified</span><span class="rv ${res.all_valid?'ok':'err'}">${res.all_valid ? '✓ YES' : '✗ NO'}</span>
       <span class="rk">Vote tally</span><span class="rv ${res.consensus_reached?'ok':'err'}">${accept}/${res.votes.length} ACCEPT</span>
       <span class="rk">Stored</span><span class="rv ${ok?'ok':'err'}">${ok ? '✓ ALL NODES' : '✗ REJECTED'}</span>
     `;
-
     if (ok) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
     else toast('Pipeline failed', 'err');
   } catch (e) {
     toast(e.message, 'err');
     renderLogs('t12-log-body', [e.message], 't12-log-status', '✗ ERROR', false);
-  } finally { setLoading('btn-t12', false); }
+  } finally { btn.disabled = false; btn.textContent = 'Sign → Consensus → Store'; }
 }
 
-// ── Task 3 ─────────────────────────────────────────────────────────
 async function runTask3() {
   const item_id = document.getElementById('t3-item_id').value.trim();
   if (!item_id) { toast('Select an item ID', 'err'); return; }
 
-  setLoading('btn-t3', true);
+  const btn = document.getElementById('btn-t3');
+  btn.disabled = true; btn.textContent = 'Querying...';
   try {
     const res = await api('/api/task3', { item_id });
     const ok  = res.success && res.sig_verified && res.sig_consistent;
-    renderLogs('t3-log-body', res.logs, 't3-log-status',
-      ok ? '✓ DELIVERED' : '✗ FAILED', ok);
-
+    renderLogs('t3-log-body', res.logs, 't3-log-status', ok ? '✓ DELIVERED' : '✗ FAILED', ok);
     const rb = document.getElementById('t3-result');
     rb.className = 'result-banner ' + (ok ? 'success' : 'failure');
     document.getElementById('t3-result-title').textContent = ok
       ? '✓ Query result verified, encrypted, and delivered'
       : '✗ Multi-signature verification failed';
-
     if (ok) {
       const r = res.result_record;
       document.getElementById('t3-result-kv').innerHTML = `
-        <span class="rk">Item ID</span><span class="rv highlight">${r.item_id}</span>
+        <span class="rk">Item ID</span><span class="rv hl">${r.item_id}</span>
         <span class="rk">Quantity</span><span class="rv ok">${r.qty}</span>
         <span class="rk">Price</span><span class="rv">${r.price}</span>
         <span class="rk">Location</span><span class="rv">${r.location}</span>
-        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S.slice(0,60)}…</span>
+        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S.slice(0,60)}...</span>
         <span class="rk">Agg. Random (R)</span><span class="rv">${res.R}</span>
         <span class="rk">Sig verified</span><span class="rv ok">✓ YES</span>
         <span class="rk">Sig consistent</span><span class="rv ok">✓ YES</span>
-        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted.slice(0,60)}…</span>
+        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted.slice(0,60)}...</span>
         <span class="rk">Decrypted</span><span class="rv ok">${res.decrypted}</span>
       `;
     }
@@ -1227,10 +822,9 @@ async function runTask3() {
   } catch (e) {
     toast(e.message, 'err');
     renderLogs('t3-log-body', [e.message], 't3-log-status', '✗ ERROR', false);
-  } finally { setLoading('btn-t3', false); }
+  } finally { btn.disabled = false; btn.textContent = 'Submit Query'; }
 }
 
-// ── Reset ──────────────────────────────────────────────────────────
 async function resetSystem() {
   if (!confirm('This will permanently delete ALL records from all nodes. Continue?')) return;
   try {
@@ -1240,9 +834,8 @@ async function resetSystem() {
   } catch (e) { toast(e.message, 'err'); }
 }
 
-// ── Init ───────────────────────────────────────────────────────────
 loadNodes();
-setInterval(loadNodes, 15000); // refresh every 15s
+setInterval(loadNodes, 15000);
 </script>
 </body>
 </html>
