@@ -1,0 +1,26 @@
+[
+  {
+    "item_id": "001",
+    "qty": 10,
+    "price": 25,
+    "location": "A"
+  },
+  {
+    "item_id": "002",
+    "qty": 13,
+    "price": 30,
+    "location": "B"
+  },
+  {
+    "item_id": "003",
+    "qty": 14,
+    "price": 20,
+    "location": "C"
+  },
+  {
+    "item_id": "004",
+    "qty": 12,
+    "price": 18,
+    "location": "A"
+  }
+]

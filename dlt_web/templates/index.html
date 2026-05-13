@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLT Inventory System — INTE2627</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #fff;
+  color: #111;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* Layout */
+#app { display: flex; min-height: 100vh; }
+
+#sidebar {
+  width: 200px;
+  background: #f5f5f5;
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  padding: 16px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 13px;
+}
+.sidebar-title small {
+  display: block;
+  font-weight: normal;
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+nav { padding: 8px 0; flex: 1; }
+
+.nav-group-label {
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+  padding: 10px 16px 4px;
+  letter-spacing: 0.5px;
+}
+
+.nav-item {
+  display: block;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { background: #eee; }
+.nav-item.active { background: #e8e8e8; border-left-color: #111; font-weight: bold; color: #000; }
+
+.sidebar-bottom {
+  padding: 12px 16px;
+  border-top: 1px solid #ccc;
+}
+
+#main {
+  flex: 1;
+  padding: 24px;
+  max-width: 960px;
+  overflow-y: auto;
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+h2 { font-size: 18px; margin-bottom: 4px; }
+.page-desc { color: #555; font-size: 13px; margin-bottom: 20px; }
+
+/* Cards */
+.card {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+.card-title {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Stats */
+.stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.stat-box {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-width: 130px;
+  background: #fafafa;
+}
+.stat-box .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.stat-box .stat-value { font-size: 20px; font-weight: bold; }
+
+/* Forms */
+.form-group { margin-bottom: 12px; }
+label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
+input[type=text], input[type=number], select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #111;
+}
+input:focus, select:focus { outline: none; border-color: #555; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Buttons */
+button {
+  padding: 8px 16px;
+  border: 1px solid #111;
+  border-radius: 3px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+button:hover { background: #333; }
+button:disabled { background: #999; border-color: #999; cursor: not-allowed; }
+button.btn-secondary { background: #fff; color: #111; }
+button.btn-secondary:hover { background: #f0f0f0; }
+button.btn-danger { background: #fff; color: #c00; border-color: #c00; font-size: 12px; width: 100%; }
+button.btn-danger:hover { background: #fef0f0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  text-align: left; padding: 7px 10px;
+  background: #f0f0f0; border: 1px solid #ddd;
+  font-size: 11px; text-transform: uppercase; color: #555;
+}
+td { padding: 7px 10px; border: 1px solid #ddd; color: #222; }
+tr:hover td { background: #fafafa; }
+
+/* Log */
+.log-wrap { margin-top: 16px; }
+.log-header {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #111; color: #fff;
+  padding: 6px 12px; font-size: 11px;
+  border-radius: 3px 3px 0 0;
+}
+.log-status { font-weight: bold; }
+.log-body {
+  background: #1a1a1a; color: #ccc;
+  padding: 10px 12px;
+  font-family: monospace; font-size: 11px; line-height: 1.7;
+  max-height: 380px; overflow-y: auto;
+  border: 1px solid #111; border-top: none;
+  border-radius: 0 0 3px 3px;
+  display: none;
+}
+.log-body.visible { display: block; }
+.log-line { display: block; }
+.log-line.ok   { color: #4caf50; }
+.log-line.err  { color: #f44; }
+.log-line.step { color: #ff9; }
+.log-line.head { color: #adf; }
+.log-line.dim  { color: #555; }
+
+/* Result banner */
+.result-banner {
+  border-radius: 3px; padding: 14px 16px;
+  margin-top: 14px; display: none; border: 1px solid #ccc;
+}
+.result-banner.success { display: block; background: #f0fff0; border-color: #4caf50; }
+.result-banner.failure { display: block; background: #fff0f0; border-color: #f44336; }
+.result-title { font-weight: bold; margin-bottom: 10px; font-size: 13px; }
+.result-banner.success .result-title { color: #2e7d32; }
+.result-banner.failure .result-title { color: #c62828; }
+
+.result-kv { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; font-size: 12px; font-family: monospace; }
+.result-kv .rk { color: #888; }
+.result-kv .rv { color: #111; word-break: break-all; }
+.result-kv .rv.ok  { color: #2e7d32; }
+.result-kv .rv.err { color: #c62828; }
+.result-kv .rv.hl  { color: #1565c0; }
+
+/* Vote chips */
+.vote-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.vote-chip {
+  padding: 3px 10px; border-radius: 3px;
+  font-size: 11px; font-family: monospace; font-weight: bold; border: 1px solid;
+}
+.vote-chip.accept { background: #f0fff0; color: #2e7d32; border-color: #4caf50; }
+.vote-chip.reject { background: #fff0f0; color: #c62828; border-color: #f44336; }
+
+/* Key display */
+.key-display {
+  font-family: monospace; font-size: 10px; color: #888;
+  word-break: break-all; line-height: 1.7;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;
+}
+
+/* Info box */
+.info-box {
+  background: #f9f9f9; border: 1px solid #ddd;
+  border-radius: 3px; padding: 12px 14px;
+  font-size: 12px; color: #444; line-height: 1.9;
+}
+.info-box p { margin-bottom: 2px; }
+
+#toast {
+  display: none !important;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-title">
+      DLT-based Inventory System
+      <small>Assignment 2 - s4092199 & s4095201</small>
+    </div>
+    <nav>
+
+      <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1</div>
+      <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2</div>
+      <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2</div>
+
+      <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3</div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main">
+
+    <!-- Task 1 -->
+    <section id="section-task1" class="section">
+      <h2>Task 1 — Digital Signature Authentication</h2>
+      <p class="page-desc">Select a node, enter a new inventory record, and sign it with that node's RSA private key. All other nodes verify the signature.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">New Record</div>
+          <div class="form-group">
+            <label>Originating Node</label>
+            <select id="t1-node"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Item ID</label>
+              <input id="t1-item_id" type="text" placeholder="e.g. 004">
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input id="t1-location" type="text" placeholder="e.g. A">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input id="t1-qty" type="number" placeholder="e.g. 12">
+            </div>
+            <div class="form-group">
+              <label>Price</label>
+              <input id="t1-price" type="number" placeholder="e.g. 18">
+            </div>
+          </div>
+          <button id="btn-t1" onclick="runTask1()">Sign Record</button>
+        </div>
+
+        <!-- <div class="card">
+          <div class="card-title">How It Works</div>
+          <div class="info-box">
+            <p><b>Step 1</b> — RSA keys derived: n = p×q, φ(n) = (p−1)(q−1), d = e⁻¹ mod φ(n)</p>
+            <p><b>Step 2</b> — Record hashed: H(record) = SHA-256 mod n</p>
+            <p><b>Step 3</b> — Signature: S = H(record)^d mod n</p>
+            <p><b>Step 4</b> — All nodes verify: S^e mod n == H(record)</p>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 1 — Execution Log</span>
+          <span class="log-status" id="t1-log-status">—</span>
+        </div>
+        <div class="log-body" id="t1-log-body"></div>
+      </div>
+      <div class="result-banner" id="t1-result">
+        <div class="result-title" id="t1-result-title"></div>
+        <div class="result-kv" id="t1-result-kv"></div>
+      </div>
+    </section>
+
+    <!-- Task 2 -->
+    <section id="section-task2" class="section">
+      <h2>Task 2 — Consensus Protocol (PBFT)</h2>
+      <p class="page-desc">Enter a record and signature. All inventory nodes vote on whether to accept it. Requires 75% supermajority.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Consensus Input</div>
+          <div class="form-group">
+            <label>Originating Node</label>
+            <select id="t2-node"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Item ID</label>
+              <input id="t2-item_id" type="text" placeholder="e.g. 004">
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input id="t2-location" type="text" placeholder="e.g. A">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input id="t2-qty" type="number" placeholder="e.g. 12">
+            </div>
+            <div class="form-group">
+              <label>Price</label>
+              <input id="t2-price" type="number" placeholder="e.g. 18">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Signature (integer from Task 1)</label>
+            <input id="t2-sig" type="text" placeholder="Paste signature integer here">
+          </div>
+          <div class="btn-row">
+            <button id="btn-t2" onclick="runTask2()">Run Consensus</button>
+            <button class="btn-secondary" onclick="autofillT2()">Auto-fill from Task 1</button>
+          </div>
+        </div>
+
+        <!-- <div class="card">
+          <div class="card-title">PBFT Phases</div>
+          <div class="info-box">
+            <p><b>Pre-prepare</b> — Leader broadcasts signed record</p>
+            <p><b>Prepare</b> — Each node verifies RSA signature independently</p>
+            <p><b>Commit</b> — Each node casts ACCEPT or REJECT vote</p>
+            <p><b>Decision</b> — &ge;75% ACCEPT &rarr; record stored at all nodes</p>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 2 — Execution Log</span>
+          <span class="log-status" id="t2-log-status">—</span>
+        </div>
+        <div class="log-body" id="t2-log-body"></div>
+      </div>
+      <div class="result-banner" id="t2-result">
+        <div class="result-title" id="t2-result-title"></div>
+        <div class="vote-row" id="t2-votes"></div>
+        <div class="result-kv" id="t2-result-kv" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- Tasks 1+2 Combined -->
+    <section id="section-task12" class="section">
+      <h2>Tasks 1+2 Combined — Full Record Insertion</h2>
+      <p class="page-desc">Sign a new record then immediately run consensus. The complete Part 1 workflow in one step.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">New Record</div>
+          <div class="form-group">
+            <label>Originating Node</label>
+            <select id="t12-node"></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Item ID</label>
+              <input id="t12-item_id" type="text" placeholder="e.g. 004">
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input id="t12-location" type="text" placeholder="e.g. A">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input id="t12-qty" type="number" placeholder="e.g. 12">
+            </div>
+            <div class="form-group">
+              <label>Price</label>
+              <input id="t12-price" type="number" placeholder="e.g. 18">
+            </div>
+          </div>
+          <button id="btn-t12" onclick="runTask12()">Sign → Consensus → Store</button>
+        </div>
+
+        <!-- <div class="card">
+          <div class="card-title">Lifecycle</div>
+          <div class="info-box">
+            <p><b>1.</b> Node generates RSA signature on new record</p>
+            <p><b>2.</b> All nodes verify the signature</p>
+            <p><b>3.</b> PBFT vote — 75% threshold required</p>
+            <p><b>4.</b> If accepted: record written to all node JSON stores</p>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Tasks 1+2 — Execution Log</span>
+          <span class="log-status" id="t12-log-status">—</span>
+        </div>
+        <div class="log-body" id="t12-log-body"></div>
+      </div>
+      <div class="result-banner" id="t12-result">
+        <div class="result-title" id="t12-result-title"></div>
+        <div class="vote-row" id="t12-votes"></div>
+        <div class="result-kv" id="t12-result-kv" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- Task 3 -->
+    <section id="section-task3" class="section">
+      <h2>Task 3 — Multi-Signature Query &amp; Secure Delivery</h2>
+      <p class="page-desc">Query an item's quantity. All nodes jointly sign the result using the Harn identity-based scheme. The PKG encrypts the response with the Procurement Officer's RSA public key.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Query Request</div>
+          <div class="form-group">
+            <label>Item ID to Query</label>
+            <select id="t3-item_id">
+              <option value="">— select item —</option>
+            </select>
+          </div>
+          <button id="btn-t3" onclick="runTask3()">Submit Query</button>
+        </div>
+
+        <!-- <div class="card">
+          <div class="card-title">Harn Multi-Signature Scheme</div>
+          <div class="info-box">
+            <p><b>PKG issues</b> s_i = ID_i^d_pkg mod n_pkg</p>
+            <p><b>Each node signs</b> sig_i = (H(m) * r_i + s_i) mod n_pkg</p>
+            <p><b>Aggregate</b> S = sum(sig_i) mod n_pkg</p>
+            <p><b>Verify</b> S == (H(m)*R + sum(s_i)) mod n_pkg</p>
+            <p><b>Encrypt</b> C = M^e_officer mod n_officer</p>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-header">
+          <span>Task 3 — Execution Log</span>
+          <span class="log-status" id="t3-log-status">—</span>
+        </div>
+        <div class="log-body" id="t3-log-body"></div>
+      </div>
+      <div class="result-banner" id="t3-result">
+        <div class="result-title" id="t3-result-title"></div>
+        <div class="result-kv" id="t3-result-kv"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let nodesData = {};
+
+function navigate(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('section-' + el.dataset.section).classList.add('active');
+}
+
+function toast(msg, type = '') {
+  const t = document.createElement('div');
+  t.className = 'toast-item' + (type ? ' ' + type : '');
+  t.textContent = msg;
+  document.getElementById('toast').appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+async function api(path, body = null) {
+  const opts = body
+    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    : { method: 'GET' };
+  const r = await fetch(path, opts);
+  const ct = r.headers.get('content-type') || '';
+  if (!ct.includes('application/json')) {
+    throw new Error(`Server error ${r.status}: ${r.statusText}. Check the Flask terminal.`);
+  }
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
+  return data;
+}
+
+function renderLogs(bodyId, logs, statusId, statusText, statusOk) {
+  const el = document.getElementById(bodyId);
+  const st = document.getElementById(statusId);
+  el.innerHTML = '';
+  logs.forEach(line => {
+    const span = document.createElement('span');
+    span.className = 'log-line';
+    if (line.includes('[STEP') || line.includes('TASK') || line.includes('MULTI-SIG')) span.classList.add('step');
+    else if (line.includes('✓')) span.classList.add('ok');
+    else if (line.includes('✗') || line.includes('ERROR')) span.classList.add('err');
+    else if (line.includes('===')) span.classList.add('head');
+    else if (line.trim() === '') span.classList.add('dim');
+    span.textContent = line;
+    el.appendChild(span);
+    el.appendChild(document.createElement('br'));
+  });
+  st.textContent = statusText;
+  st.style.color = statusOk ? '#4caf50' : '#f44336';
+  el.classList.add('visible');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function loadNodes() {
+  try {
+    const data = await api('/api/nodes');
+    nodesData = data.nodes;
+    renderDashboard();
+    renderNodesFull();
+    populateNodeSelects();
+    populateItemSelect();
+  } catch (e) { toast('Failed to load nodes: ' + e.message, 'err'); }
+}
+
+function populateNodeSelects() {
+  const ids = Object.keys(nodesData);
+  ['t1-node','t2-node','t12-node'].forEach(sid => {
+    const sel = document.getElementById(sid);
+    const prev = sel.value;
+    sel.innerHTML = '';
+    ids.forEach(id => {
+      const opt = document.createElement('option');
+      opt.value = id; opt.textContent = 'Inventory ' + id;
+      sel.appendChild(opt);
+    });
+    if (prev && ids.includes(prev)) sel.value = prev;
+  });
+}
+
+function populateItemSelect() {
+  const sel = document.getElementById('t3-item_id');
+  const prev = sel.value;
+  const firstNode = Object.values(nodesData)[0];
+  if (!firstNode) return;
+  const ids = firstNode.records.map(r => r.item_id);
+  if (ids.length === 0) {
+    sel.innerHTML = '<option value="">— no records yet, add via Tasks 1+2 —</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">— select item —</option>';
+  ids.forEach(id => {
+    const opt = document.createElement('option');
+    opt.value = id; opt.textContent = id;
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+}
+
+function renderDashboard() {
+  const nodeIds = Object.keys(nodesData);
+  const totalRecords = Object.values(nodesData).reduce((s,n) => s + n.records.length, 0);
+
+  document.getElementById('stat-tiles').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Nodes Online</div><div class="stat-value">${nodeIds.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Total Records</div><div class="stat-value">${totalRecords}</div></div>
+    <div class="stat-box"><div class="stat-label">Consensus</div><div class="stat-value" style="font-size:15px;padding-top:3px;">PBFT</div></div>
+    <div class="stat-box"><div class="stat-label">Multi-Sig</div><div class="stat-value" style="font-size:15px;padding-top:3px;">Harn</div></div>
+  `;
+
+  const wrap = document.getElementById('dashboard-nodes');
+  if (totalRecords === 0) {
+    wrap.innerHTML = `<div class="card" style="text-align:center;padding:30px;">
+      <p style="margin-bottom:12px;color:#555;">No records yet. Use <b>Tasks 1+2 Combined</b> to add your first inventory record.</p>
+      <button onclick="navigate(document.querySelector('[data-section=task12]'))">Add First Record</button>
+    </div>`;
+    return;
+  }
+  wrap.innerHTML = '<div class="grid-2">' + nodeIds.map(nid => {
+    const node = nodesData[nid];
+    const rows = node.records.length === 0
+      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records</td></tr>`
+      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
+    return `<div class="card">
+      <div class="card-title">Node ${nid} &nbsp;<small style="font-weight:normal;color:#888;">${node.records.length} record(s)</small></div>
+      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="key-display"><b>e:</b> ${node.public_key.e}<br><b>n:</b> ${node.public_key.n.slice(0,50)}...</div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function renderNodesFull() {
+  const wrap = document.getElementById('nodes-full');
+  wrap.innerHTML = Object.keys(nodesData).map(nid => {
+    const node = nodesData[nid];
+    const rows = node.records.length === 0
+      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records — add via Tasks 1+2</td></tr>`
+      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
+    return `<div class="card">
+      <div class="card-title">Inventory Node ${nid}</div>
+      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="key-display"><b>Public exponent (e):</b> ${node.public_key.e}<br><b>Modulus (n):</b> ${node.public_key.n}</div>
+    </div>`;
+  }).join('');
+}
+
+async function runTask1() {
+  const node_id  = document.getElementById('t1-node').value;
+  const item_id  = document.getElementById('t1-item_id').value.trim();
+  const qty      = document.getElementById('t1-qty').value;
+  const price    = document.getElementById('t1-price').value;
+  const location = document.getElementById('t1-location').value.trim().toUpperCase();
+  if (!item_id || !qty || !price || !location) { toast('Fill in all fields', 'err'); return; }
+
+  const btn = document.getElementById('btn-t1');
+  btn.disabled = true; btn.textContent = 'Signing...';
+  try {
+    const res = await api('/api/task1', { node_id, record: { item_id, qty, price, location } });
+    renderLogs('t1-log-body', res.logs, 't1-log-status',
+      res.all_valid ? '✓ ALL VERIFIED' : '✗ FAILED', res.all_valid);
+    const rb = document.getElementById('t1-result');
+    rb.className = 'result-banner ' + (res.all_valid ? 'success' : 'failure');
+    document.getElementById('t1-result-title').textContent =
+      res.all_valid ? '✓ Signature valid — all nodes verified' : '✗ Signature verification failed';
+    document.getElementById('t1-result-kv').innerHTML = `
+      <span class="rk">Node</span><span class="rv">${res.node_id}</span>
+      <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
+      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
+      ${Object.entries(res.verifications).map(([k,v]) =>
+        `<span class="rk">Node ${k} verify</span><span class="rv ${v?'ok':'err'}">${v ? '✓ VALID' : '✗ INVALID'}</span>`
+      ).join('')}
+    `;
+    window._lastT1 = { node_id, record: res.record, signature: res.signature };
+    toast('Record signed successfully', 'ok');
+  } catch (e) {
+    toast(e.message, 'err');
+    renderLogs('t1-log-body', [e.message], 't1-log-status', '✗ ERROR', false);
+  } finally { btn.disabled = false; btn.textContent = 'Sign Record'; }
+}
+
+function autofillT2() {
+  if (!window._lastT1) { toast('Run Task 1 first', 'err'); return; }
+  const { node_id, record, signature } = window._lastT1;
+  document.getElementById('t2-node').value     = node_id;
+  document.getElementById('t2-item_id').value  = record.item_id;
+  document.getElementById('t2-qty').value      = record.qty;
+  document.getElementById('t2-price').value    = record.price;
+  document.getElementById('t2-location').value = record.location;
+  document.getElementById('t2-sig').value      = signature;
+  toast('Fields filled from Task 1', 'ok');
+}
+
+async function runTask2() {
+  const node_id   = document.getElementById('t2-node').value;
+  const item_id   = document.getElementById('t2-item_id').value.trim();
+  const qty       = document.getElementById('t2-qty').value;
+  const price     = document.getElementById('t2-price').value;
+  const location  = document.getElementById('t2-location').value.trim().toUpperCase();
+  const signature = document.getElementById('t2-sig').value.trim();
+  if (!item_id || !qty || !price || !location || !signature) { toast('Fill in all fields including signature', 'err'); return; }
+
+  const btn = document.getElementById('btn-t2');
+  btn.disabled = true; btn.textContent = 'Running consensus...';
+  try {
+    const res = await api('/api/task2', { node_id, record: { item_id, qty, price, location }, signature });
+    renderLogs('t2-log-body', res.logs, 't2-log-status',
+      res.consensus_reached ? '✓ CONSENSUS REACHED' : '✗ REJECTED', res.consensus_reached);
+    const rb = document.getElementById('t2-result');
+    rb.className = 'result-banner ' + (res.consensus_reached ? 'success' : 'failure');
+    document.getElementById('t2-result-title').textContent =
+      res.consensus_reached ? '✓ Consensus reached — record stored at all nodes' : '✗ Consensus failed — record rejected';
+    document.getElementById('t2-votes').innerHTML = res.votes.map(v =>
+      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}</div>`
+    ).join('');
+    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
+    document.getElementById('t2-result-kv').innerHTML = `
+      <span class="rk">Vote tally</span><span class="rv ${res.consensus_reached?'ok':'err'}">${accept}/${res.votes.length} ACCEPT</span>
+      <span class="rk">Threshold</span><span class="rv">75% (${Math.ceil(res.votes.length*0.75)}/${res.votes.length})</span>
+      <span class="rk">Decision</span><span class="rv ${res.consensus_reached?'ok':'err'}">${res.consensus_reached ? 'COMMITTED' : 'ABORTED'}</span>
+    `;
+    if (res.consensus_reached) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
+    else toast('Consensus not reached', 'err');
+  } catch (e) {
+    toast(e.message, 'err');
+    renderLogs('t2-log-body', [e.message], 't2-log-status', '✗ ERROR', false);
+  } finally { btn.disabled = false; btn.textContent = 'Run Consensus'; }
+}
+
+async function runTask12() {
+  const node_id  = document.getElementById('t12-node').value;
+  const item_id  = document.getElementById('t12-item_id').value.trim();
+  const qty      = document.getElementById('t12-qty').value;
+  const price    = document.getElementById('t12-price').value;
+  const location = document.getElementById('t12-location').value.trim().toUpperCase();
+  if (!item_id || !qty || !price || !location) { toast('Fill in all fields', 'err'); return; }
+
+  const btn = document.getElementById('btn-t12');
+  btn.disabled = true; btn.textContent = 'Processing...';
+  try {
+    const res = await api('/api/task1and2', { node_id, record: { item_id, qty, price, location } });
+    const ok  = res.all_valid && res.consensus_reached;
+    renderLogs('t12-log-body', res.logs, 't12-log-status', ok ? '✓ STORED' : '✗ FAILED', ok);
+    const rb = document.getElementById('t12-result');
+    rb.className = 'result-banner ' + (ok ? 'success' : 'failure');
+    document.getElementById('t12-result-title').textContent = ok
+      ? '✓ Record signed, consensus reached, stored across all nodes'
+      : '✗ Pipeline failed — check log';
+    document.getElementById('t12-votes').innerHTML = res.votes.map(v =>
+      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}</div>`
+    ).join('');
+    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
+    document.getElementById('t12-result-kv').innerHTML = `
+      <span class="rk">Node</span><span class="rv">${res.node_id}</span>
+      <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
+      <span class="rk">Signature</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
+      <span class="rk">Sig Verified</span><span class="rv ${res.all_valid?'ok':'err'}">${res.all_valid ? '✓ YES' : '✗ NO'}</span>
+      <span class="rk">Vote tally</span><span class="rv ${res.consensus_reached?'ok':'err'}">${accept}/${res.votes.length} ACCEPT</span>
+      <span class="rk">Stored</span><span class="rv ${ok?'ok':'err'}">${ok ? '✓ ALL NODES' : '✗ REJECTED'}</span>
+    `;
+    if (ok) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
+    else toast('Pipeline failed', 'err');
+  } catch (e) {
+    toast(e.message, 'err');
+    renderLogs('t12-log-body', [e.message], 't12-log-status', '✗ ERROR', false);
+  } finally { btn.disabled = false; btn.textContent = 'Sign → Consensus → Store'; }
+}
+
+async function runTask3() {
+  const item_id = document.getElementById('t3-item_id').value.trim();
+  if (!item_id) { toast('Select an item ID', 'err'); return; }
+
+  const btn = document.getElementById('btn-t3');
+  btn.disabled = true; btn.textContent = 'Querying...';
+  try {
+    const res = await api('/api/task3', { item_id });
+    const ok  = res.success && res.sig_verified && res.sig_consistent;
+    renderLogs('t3-log-body', res.logs, 't3-log-status', ok ? '✓ DELIVERED' : '✗ FAILED', ok);
+    const rb = document.getElementById('t3-result');
+    rb.className = 'result-banner ' + (ok ? 'success' : 'failure');
+    document.getElementById('t3-result-title').textContent = ok
+      ? '✓ Query result verified, encrypted, and delivered'
+      : '✗ Multi-signature verification failed';
+    if (ok) {
+      const r = res.result_record;
+      document.getElementById('t3-result-kv').innerHTML = `
+        <span class="rk">Item ID</span><span class="rv hl">${r.item_id}</span>
+        <span class="rk">Quantity</span><span class="rv ok">${r.qty}</span>
+        <span class="rk">Price</span><span class="rv">${r.price}</span>
+        <span class="rk">Location</span><span class="rv">${r.location}</span>
+        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S.slice(0,60)}...</span>
+        <span class="rk">Agg. Random (R)</span><span class="rv">${res.R}</span>
+        <span class="rk">Sig verified</span><span class="rv ok">✓ YES</span>
+        <span class="rk">Sig consistent</span><span class="rv ok">✓ YES</span>
+        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted.slice(0,60)}...</span>
+        <span class="rk">Decrypted</span><span class="rv ok">${res.decrypted}</span>
+      `;
+    }
+    toast(ok ? 'Query delivered securely' : 'Verification failed', ok ? 'ok' : 'err');
+  } catch (e) {
+    toast(e.message, 'err');
+    renderLogs('t3-log-body', [e.message], 't3-log-status', '✗ ERROR', false);
+  } finally { btn.disabled = false; btn.textContent = 'Submit Query'; }
+}
+
+async function resetSystem() {
+  if (!confirm('This will permanently delete ALL records from all nodes. Continue?')) return;
+  try {
+    await api('/api/reset', {});
+    await loadNodes();
+    toast('All node records cleared', 'ok');
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const task1Tab = document.querySelector('[data-section="task1"]');
+
+  if (task1Tab) {
+    navigate(task1Tab);
+  }
+
+  loadNodes();
+  setInterval(loadNodes, 15000);
+});
+
+loadNodes();
+setInterval(loadNodes, 15000);
+</script>
+</body>
+</html>
