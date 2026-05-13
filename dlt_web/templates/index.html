@@ -228,18 +228,9 @@ tr:hover td { background: #fafafa; }
 }
 .info-box p { margin-bottom: 2px; }
 
-/* Toast */
 #toast {
-  position: fixed; bottom: 20px; right: 20px;
-  z-index: 9999; display: flex; flex-direction: column; gap: 6px;
+  display: none !important;
 }
-.toast-item {
-  background: #111; color: #fff;
-  border-radius: 3px; padding: 8px 14px;
-  font-size: 12px; max-width: 260px;
-}
-.toast-item.ok  { background: #2e7d32; }
-.toast-item.err { background: #c62828; }
 </style>
 </head>
 <body>
@@ -249,16 +240,16 @@ tr:hover td { background: #fafafa; }
   <!-- Sidebar -->
   <aside id="sidebar">
     <div class="sidebar-title">
-      DLT Inventory System
-      <small>INTE2627 Assignment 2</small>
+      DLT-based Inventory System
+      <small>Assignment 2 - s4092199 & s4095201</small>
     </div>
     <nav>
 
-      <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1 — Sign Record</div>
-      <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2 — Consensus</div>
-      <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2 Combined</div>
+      <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1</div>
+      <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2</div>
+      <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2</div>
 
-      <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3 — Query</div>
+      <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3</div>
     </nav>
   </aside>
 
