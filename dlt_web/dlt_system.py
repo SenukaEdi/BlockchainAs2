@@ -1,10 +1,3 @@
-# =============================================================================
-# dlt_system.py
-# Central orchestrator for the DLT Inventory Management System.
-# Wires together all nodes, consensus engine, Harn multi-sig, and RSA encryption.
-# INTE2627 Assignment 2 - DLT Inventory Management System
-# =============================================================================
-
 from keys_config import (
     INVENTORY_KEYS, PKG_KEYS, PROCUREMENT_KEYS,
     INVENTORY_IDS, INVENTORY_RANDOM
@@ -19,13 +12,9 @@ from crypto_utils import (
 
 
 class DLTSystem:
-    """
-    Full DLT Inventory Management System.
-    Provides high-level methods for each assignment task.
-    """
-
+    # Main class that connects the inventory nodes, consensus, Harn signatures and RSA encryption
     def __init__(self):
-        # ---- Initialise inventory nodes with their RSA keys (count from keys_config) ----
+        # Creates the inventory nodes using the keys from keys_config.py
         self.nodes = {}
         for node_id, kv in INVENTORY_KEYS.items():
             self.nodes[node_id] = InventoryNode(
@@ -33,43 +22,34 @@ class DLTSystem:
                 p=kv["p"], q=kv["q"], e=kv["e"]
             )
 
-        # ---- Consensus engine ----
+        # Sets up the consensus engine with all inventory nodes
         node_list = list(self.nodes.values())
         self.consensus = ConsensusEngine(node_list)
 
-        # ---- PKG RSA keys for Harn scheme ----
+        # Creates the PKG keys used for the Harn multi-signature scheme
         self.pkg_keys = derive_rsa_keys(
             PKG_KEYS["p"], PKG_KEYS["q"], PKG_KEYS["e"]
         )
 
-        # ---- Procurement Officer RSA keys (for encrypting response) ----
+        # Creates the Procurement Officer keys used to encrypt and decrypt the query result
         self.procurement_keys = derive_rsa_keys(
             PROCUREMENT_KEYS["p"], PROCUREMENT_KEYS["q"], PROCUREMENT_KEYS["e"]
         )
 
-        # ---- Harn Multi-Signature engine ----
+        # Sets up the Harn multi-signature helper using the PKG key values
         self.harn = HarnMultiSig(
             pkg_e=self.pkg_keys["e"],
             pkg_d=self.pkg_keys["d"],
             pkg_n=self.pkg_keys["n"],
         )
 
-        # Pre-issue partial keys from PKG to each inventory node
+        # Gives each inventory node its partial key from the PKG
         self.partial_keys = {}
         for node_id, id_val in INVENTORY_IDS.items():
             self.partial_keys[node_id] = self.harn.issue_partial_key(id_val)
 
-    # =====================================================================
-    # TASK 1 - Digital Signature–Based Record Authentication
-    # =====================================================================
-
+    # Task 1: signs the new record and verifies it across all nodes
     def task1_sign_and_verify(self, originating_node_id: str, new_record: dict, log_callback=None):
-        """
-        Task 1 workflow:
-          1. Originating node digitally signs the new record.
-          2. All other nodes verify the signature.
-          3. Returns (signature, verification_results)
-        """
         def log(msg):
             if log_callback:
                 log_callback(msg)
@@ -85,7 +65,7 @@ class DLTSystem:
         log(f"  Record: {record_str}")
         log("")
 
-        # Step 1: Show RSA key parameters
+        # Shows the RSA values used by the originating node
         log("  [STEP 1] RSA Key Parameters for Inventory " + originating_node_id)
         log(f"    p   = {origin.keys['p']}")
         log(f"    q   = {origin.keys['q']}")
@@ -95,21 +75,21 @@ class DLTSystem:
         log(f"    d   = e^(-1) mod φ(n) = {origin.keys['d']}")
         log("")
 
-        # Step 2: Hash the record
+        # Hashes the record before signing it
         h = origin.get_hash_of_record(new_record)
         log("  [STEP 2] Hash the Record")
         log(f"    SHA-256 of record string, reduced mod n:")
         log(f"    H(record) = {h}")
         log("")
 
-        # Step 3: Sign
+        # Creates the digital signature for the record
         signature = origin.sign_record(new_record)
         log("  [STEP 3] Generate Digital Signature")
         log(f"    S = H(record)^d mod n")
         log(f"    S = {signature}")
         log("")
 
-        # Step 4: Broadcast and verify at other nodes
+        # Sends the signature to every node for checking
         log("  [STEP 4] Broadcast to All Nodes for Verification")
         log(f"    Public Key of Inventory {originating_node_id}: (e={origin.keys['e']}, n={origin.keys['n']})")
         log("")
@@ -130,17 +110,8 @@ class DLTSystem:
 
         return signature, verifications
 
-    # =====================================================================
-    # TASK 2 - Consensus Protocol Integration
-    # =====================================================================
-
+    # Task 2: runs the simplified PBFT consensus process
     def task2_consensus(self, originating_node_id: str, new_record: dict, signature: int, log_callback=None):
-        """
-        Task 2 workflow:
-          1. Run PBFT-simplified consensus across all nodes.
-          2. If accepted, record is stored in all node databases.
-          3. Returns (consensus_reached, vote_details)
-        """
         def log(msg):
             if log_callback:
                 log_callback(msg)
@@ -168,22 +139,8 @@ class DLTSystem:
         )
         return consensus_reached, votes
 
-    # =====================================================================
-    # TASK 3 - Multi-Signature Query Verification and Secure Delivery
-    # =====================================================================
-
+    # Task 3: queries an item and returns it using Harn multi-signature and RSA encryption
     def task3_query(self, item_id: str, log_callback=None):
-        """
-        Task 3 workflow:
-          1. Procurement Officer submits query for item_id.
-          2. PKG forwards query to all inventory nodes.
-          3. Each node finds the record and generates a Harn partial signature.
-          4. Aggregated multi-signature is computed and verified.
-          5. Consensus check on aggregated signatures.
-          6. Response is RSA-encrypted with Procurement Officer's public key.
-          7. Officer decrypts and validates the result.
-          Returns full workflow log dict.
-        """
         def log(msg):
             if log_callback:
                 log_callback(msg)
@@ -194,19 +151,19 @@ class DLTSystem:
         log(f"  Query: Retrieve quantity for Item ID = {item_id}")
         log("")
 
-        # ---- Step 1: Procurement Officer submits query ----
+        # The Procurement Officer sends the item query to the PKG
         log("  [STEP 1] Procurement Officer → PKG: Submit Query")
         log(f"    Query item_id = '{item_id}'")
         log("")
 
-        # ---- Step 2: PKG forwards query to inventory nodes ----
+        # The PKG forwards the query to the inventory nodes
         log("  [STEP 2] PKG → Inventory Nodes: Forward Query")
         log(f"    PKG n = {self.pkg_keys['n']}")
         log(f"    PKG e = {self.pkg_keys['e']}")
         log(f"    PKG d = {self.pkg_keys['d']}")
         log("")
 
-        # ---- Step 3: Each node searches for record ----
+        # Each inventory node checks if it has the requested item
         log("  [STEP 3] Each Inventory Node: Search Record")
         records_found = {}
         for nid, node in self.nodes.items():
@@ -221,14 +178,13 @@ class DLTSystem:
             log("  ERROR: No nodes have this record. Query failed.")
             return None
 
-        # Use the first found record as the query result
         result_record = list(records_found.values())[0]
         result_message = f"item_id={result_record['item_id']},qty={result_record['qty']}"
         log("")
         log(f"  Query Result Message: '{result_message}'")
         log("")
 
-        # ---- Step 4: Harn partial signatures ----
+        # Each node creates its Harn partial signature for the query result
         log("  [STEP 4] Harn Identity-Based Multi-Signature Generation")
         log(f"    H(result) mod n_pkg = {hash_message_mod(result_message, self.pkg_keys['n'])}")
         log("")
@@ -258,7 +214,7 @@ class DLTSystem:
             log(f"      sig_{nid} = (H(m)*r_{nid} + s_{nid}) mod n_pkg = {sig_i}")
             log("")
 
-        # ---- Step 5: Aggregate signatures ----
+        # Combines all partial signatures into one aggregated signature
         log("  [STEP 5] Aggregate Multi-Signature")
         S = self.harn.aggregate_signatures(partial_sigs)
         R = self.harn.aggregate_randoms(random_vals_used)
@@ -266,12 +222,12 @@ class DLTSystem:
         log(f"    R (aggregated rnd) = sum(r_i)   mod n_pkg = {R}")
         log("")
 
-        # ---- Step 6: Consensus check on signatures ----
+        # Checks that the aggregated signature matches the partial signatures
         log("  [STEP 6] Consensus Check on Aggregated Signatures")
         sig_consistent = self.harn.consensus_check(partial_sigs, S, log_callback=log)
         log("")
 
-        # ---- Step 7: Verify aggregated multi-signature ----
+        # Verifies the final multi-signature before returning the result
         log("  [STEP 7] Verify Aggregated Multi-Signature")
         is_verified = self.harn.verify_aggregate_signature(
             message=result_message,
@@ -289,7 +245,7 @@ class DLTSystem:
                 "item_id": item_id,
             }
 
-        # ---- Step 8: Encrypt the result with Procurement Officer's RSA public key ----
+        # Encrypts the result so only the Procurement Officer can read it
         log("  [STEP 8] PKG Encrypts Result for Procurement Officer")
         proc_e = self.procurement_keys["e"]
         proc_n = self.procurement_keys["n"]
@@ -300,14 +256,14 @@ class DLTSystem:
         log(f"    Ciphertext : C = M^e mod n = {encrypted}")
         log("")
 
-        # ---- Step 9: Procurement Officer decrypts ----
+        # Decrypts the response from the Procurement Officer side
         log("  [STEP 9] Procurement Officer Decrypts Response")
         proc_d = self.procurement_keys["d"]
         decrypted = rsa_decrypt_text(encrypted, proc_d, proc_n)
         log(f"    Decrypted  : '{decrypted}'")
         log("")
 
-        # ---- Step 10: Validate decrypted result ----
+        # Final check and output of the queried record details
         log("  [STEP 10] Procurement Officer Validates Result")
         qty = result_record["qty"]
         log(f"    Item ID  : {result_record['item_id']}")

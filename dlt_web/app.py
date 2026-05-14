@@ -1,8 +1,3 @@
-# =============================================================================
-# app.py  –  Flask web server for the DLT Inventory Management System
-# INTE2627 Assignment 2
-# =============================================================================
-
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -11,27 +6,24 @@ from dlt_system import DLTSystem
 
 app = Flask(__name__)
 
-# Always return JSON errors, never HTML error pages
+# Keeps backend errors in JSON format so the webpage can read them properly
 @app.errorhandler(Exception)
 def handle_exception(e):
     import traceback
-    traceback.print_exc()  # still prints to terminal for debugging
+    traceback.print_exc()
     return jsonify({"error": str(e)}), 500
 
 @app.errorhandler(404)
 def handle_404(e):
     return jsonify({"error": "Not found"}), 404
 
-# Single shared system instance (in-memory state + JSON-file persistence)
+# Creates one shared DLT system for all the API routes to use
 system = DLTSystem()
 
 
-# ---------------------------------------------------------------------------
-# Helper: capture logs emitted by DLTSystem methods
-# ---------------------------------------------------------------------------
-
+# Collects the step-by-step messages from the DLT system
+# These logs are later shown in the webpage output box
 def make_logger():
-    """Returns (log_callback, get_logs).  Call get_logs() after the operation."""
     logs = []
     def callback(msg):
         logs.append(msg)
@@ -40,22 +32,15 @@ def make_logger():
     return callback, get
 
 
-# ---------------------------------------------------------------------------
-# Pages
-# ---------------------------------------------------------------------------
-
+# Loads the main webpage
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# ---------------------------------------------------------------------------
-# API – nodes / records
-# ---------------------------------------------------------------------------
-
+# Sends all current node records and public keys to the frontend
 @app.route("/api/nodes", methods=["GET"])
 def api_nodes():
-    """Return all nodes with their current records and public keys."""
     data = {}
     for nid, node in system.nodes.items():
         data[nid] = {
@@ -65,21 +50,13 @@ def api_nodes():
     return jsonify({"nodes": data})
 
 
-# ---------------------------------------------------------------------------
-# API – Task 1: sign a new record
-# ---------------------------------------------------------------------------
-
+# Task 1: signs a new inventory record and checks if all nodes verify it
 @app.route("/api/task1", methods=["POST"])
 def api_task1():
-    """
-    Body JSON: { node_id, record: {item_id, qty, price, location} }
-    Returns:   { signature, verifications, logs }
-    """
     body = request.get_json(force=True)
     node_id = body.get("node_id", "").strip().upper()
     record  = body.get("record", {})
 
-    # Validate
     if node_id not in system.nodes:
         return jsonify({"error": f"Unknown node '{node_id}'. Valid: {list(system.nodes.keys())}"}), 400
     required = {"item_id", "qty", "price", "location"}
@@ -110,16 +87,9 @@ def api_task1():
     })
 
 
-# ---------------------------------------------------------------------------
-# API – Task 2: run consensus on a pre-signed record
-# ---------------------------------------------------------------------------
-
+# Task 2: runs PBFT consensus using the signed record from Task 1
 @app.route("/api/task2", methods=["POST"])
 def api_task2():
-    """
-    Body JSON: { node_id, record, signature }
-    Returns:   { consensus_reached, votes, logs }
-    """
     body      = request.get_json(force=True)
     node_id   = body.get("node_id", "").strip().upper()
     record    = body.get("record", {})
@@ -152,16 +122,9 @@ def api_task2():
     })
 
 
-# ---------------------------------------------------------------------------
-# API – Tasks 1 + 2 combined (most common flow)
-# ---------------------------------------------------------------------------
-
+# Combined flow: does Task 1 first, then immediately runs Task 2
 @app.route("/api/task1and2", methods=["POST"])
 def api_task1and2():
-    """
-    Body JSON: { node_id, record: {item_id, qty, price, location} }
-    Runs Task 1 then Task 2 sequentially, returns combined result.
-    """
     body    = request.get_json(force=True)
     node_id = body.get("node_id", "").strip().upper()
     record  = body.get("record", {})
@@ -175,7 +138,6 @@ def api_task1and2():
     except (ValueError, TypeError):
         return jsonify({"error": "qty and price must be integers"}), 400
 
-    # Task 1
     log1, get1 = make_logger()
     signature, verifications = system.task1_sign_and_verify(
         originating_node_id=node_id,
@@ -183,7 +145,6 @@ def api_task1and2():
         log_callback=log1,
     )
 
-    # Task 2
     log2, get2 = make_logger()
     consensus_reached, votes = system.task2_consensus(
         originating_node_id=node_id,
@@ -204,16 +165,9 @@ def api_task1and2():
     })
 
 
-# ---------------------------------------------------------------------------
-# API – Task 3: multi-signature query
-# ---------------------------------------------------------------------------
-
+# Task 3: queries an item and returns the multi-signature result
 @app.route("/api/task3", methods=["POST"])
 def api_task3():
-    """
-    Body JSON: { item_id }
-    Returns:   { success, result_record, S, R, encrypted, decrypted, logs, ... }
-    """
     body    = request.get_json(force=True)
     item_id = body.get("item_id", "").strip()
 
@@ -226,29 +180,21 @@ def api_task3():
     if result is None:
         return jsonify({"error": "Item not found in any node", "logs": get_logs()}), 404
 
-    # Convert big integers to strings for JSON serialisation
     safe = {k: (str(v) if isinstance(v, int) else v) for k, v in result.items()}
     safe["partial_sigs"] = [str(s) for s in result.get("partial_sigs", [])]
     safe["logs"] = get_logs()
     return jsonify(safe)
 
 
-# ---------------------------------------------------------------------------
-# API – Reset all nodes to defaults
-# ---------------------------------------------------------------------------
-
+# Clears all stored inventory records from every node
 @app.route("/api/reset", methods=["POST"])
 def api_reset():
-    """Clear all records from every node. Nodes return to empty state."""
     for node in system.nodes.values():
         node.clear_all_records()
     return jsonify({"ok": True, "message": "All node records cleared."})
 
 
-# ---------------------------------------------------------------------------
-# Run
-# ---------------------------------------------------------------------------
-
+# Starts the Flask server
 if __name__ == "__main__":
     print("\n  DLT Inventory System — web interface")
     print("  Open http://127.0.0.1:5000 in your browser\n")

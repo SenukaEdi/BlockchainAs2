@@ -1,24 +1,11 @@
-# =============================================================================
-# crypto_utils.py
-# RSA cryptographic primitives implemented from scratch.
-# No third-party sign/verify functions used.
-# INTE2627 Assignment 2 - DLT Inventory Management System
-# =============================================================================
-
 import hashlib
 import math
 
 
-# ---------------------------------------------------------------------------
-# Modular Arithmetic Helpers
-# ---------------------------------------------------------------------------
+# Finds the modular inverse needed for the RSA private key
+# This is used to calculate d from e and phi
 
 def mod_inverse(e, phi):
-    """
-    Compute the modular inverse of e mod phi using the Extended Euclidean Algorithm.
-    Returns d such that (e * d) % phi == 1.
-    """
-    # Extended Euclidean Algorithm
     old_r, r = e, phi
     old_s, s = 1, 0
 
@@ -32,27 +19,16 @@ def mod_inverse(e, phi):
     return old_s % phi
 
 
+# Handles modular exponentiation for RSA calculations
+# This is used instead of doing base ** exp directly because the numbers can be very large
+
 def mod_exp(base, exp, mod):
-    """
-    Fast modular exponentiation using Python's built-in pow with three arguments.
-    Equivalent to (base ** exp) % mod but efficient for large numbers.
-    """
     return pow(base, exp, mod)
 
 
-# ---------------------------------------------------------------------------
-# RSA Key Derivation
-# ---------------------------------------------------------------------------
+# Creates the RSA public and private key values from p, q and e
 
 def derive_rsa_keys(p, q, e):
-    """
-    Given RSA primes p, q and public exponent e, derive:
-      - n   : modulus
-      - phi : Euler's totient = (p-1)(q-1)
-      - d   : private exponent (modular inverse of e mod phi)
-
-    Returns a dict with keys: p, q, e, n, phi, d
-    """
     n = p * q
     phi = (p - 1) * (q - 1)
     d = mod_inverse(e, phi)
@@ -66,103 +42,75 @@ def derive_rsa_keys(p, q, e):
     }
 
 
-# ---------------------------------------------------------------------------
-# Hashing
-# ---------------------------------------------------------------------------
+# Converts a message into a SHA-256 hash integer
 
 def hash_message(message: str) -> int:
-    """
-    SHA-256 hash of a message string, returned as an integer.
-    """
     digest = hashlib.sha256(message.encode("utf-8")).hexdigest()
     return int(digest, 16)
 
 
+# Reduces the hash so it fits within the RSA modulus
+
 def hash_message_mod(message: str, n: int) -> int:
-    """
-    SHA-256 hash reduced modulo n (for signing).
-    """
     h = hash_message(message)
     return h % n
 
 
-# ---------------------------------------------------------------------------
-# RSA Digital Signature (from scratch)
-# ---------------------------------------------------------------------------
+# Signs a message using the RSA private key
 
 def rsa_sign(message: str, d: int, n: int) -> int:
-    """
-    Sign a message using RSA private key (d, n).
-    Signature S = H(message)^d mod n
-
-    No third-party sign() function used.
-    """
     h = hash_message_mod(message, n)
     signature = mod_exp(h, d, n)
     return signature
 
 
-def rsa_verify(message: str, signature: int, e: int, n: int) -> bool:
-    """
-    Verify an RSA signature using public key (e, n).
-    Recover H' = S^e mod n, compare with H(message) mod n.
+# Verifies the RSA signature using the public key
 
-    Returns True if valid, False otherwise.
-    No third-party verify() function used.
-    """
+def rsa_verify(message: str, signature: int, e: int, n: int) -> bool:
     h_expected = hash_message_mod(message, n)
     h_recovered = mod_exp(signature, e, n)
     return h_expected == h_recovered
 
 
-# ---------------------------------------------------------------------------
-# RSA Encryption / Decryption (for Task 3 secure delivery)
-# ---------------------------------------------------------------------------
+# Encrypts an integer using RSA
 
 def rsa_encrypt(plaintext_int: int, e: int, n: int) -> int:
-    """
-    RSA encrypt an integer: C = M^e mod n
-    """
     if plaintext_int >= n:
         raise ValueError("Plaintext integer must be less than modulus n.")
     return mod_exp(plaintext_int, e, n)
 
 
+# Decrypts an integer using RSA
+
 def rsa_decrypt(ciphertext_int: int, d: int, n: int) -> int:
-    """
-    RSA decrypt an integer: M = C^d mod n
-    """
     return mod_exp(ciphertext_int, d, n)
 
 
+# Converts an integer back into text
+
 def int_to_str(value: int) -> str:
-    """Convert integer back to string via bytes."""
     byte_length = (value.bit_length() + 7) // 8
     return value.to_bytes(byte_length, "big").decode("utf-8", errors="replace")
 
 
+# Converts text into an integer so RSA can process it
+
 def str_to_int(text: str) -> int:
-    """Convert a string to an integer via bytes."""
     return int.from_bytes(text.encode("utf-8"), "big")
 
 
+# Encrypts normal text by converting it into an integer first
+
 def rsa_encrypt_text(plaintext: str, e: int, n: int) -> int:
-    """
-    Encrypt a text string using RSA public key (e, n).
-    Converts string → integer → C = M^e mod n
-    """
     m = str_to_int(plaintext)
     if m >= n:
-        # Use hash as representative if message too large
         m = hash_message_mod(plaintext, n)
     return rsa_encrypt(m, e, n)
 
 
+# Decrypts RSA ciphertext and tries to convert it back into readable text
+
 def rsa_decrypt_text(ciphertext: int, d: int, n: int, original_len_hint: int = None) -> str:
-    """
-    Decrypt RSA ciphertext to recover text string.
-    C^d mod n → integer → string
-    """
     m = rsa_decrypt(ciphertext, d, n)
     try:
         byte_length = (m.bit_length() + 7) // 8
