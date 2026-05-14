@@ -57,7 +57,7 @@ class ConsensusEngine:
                 "signature_valid": is_valid,
             }
             votes.append(vote_detail)
-            log(f"  Node {node.node_id}: Signature verification → {'✓ VALID' if is_valid else '✗ INVALID'} → Vote: {vote}")
+            log(f"  Node {node.node_id}: Signature verification → {'VALID' if is_valid else 'INVALID'} → Vote: {vote}")
 
         log("")
         accept_ratio = accept_count / n_nodes
@@ -65,12 +65,12 @@ class ConsensusEngine:
 
         log(f"  Vote tally: {accept_count}/{n_nodes} ACCEPT ({accept_ratio*100:.1f}%)")
         log(f"  Threshold:  {CONSENSUS_THRESHOLD*100:.1f}%  (need {required}/{n_nodes})")
-        log(f"  Consensus:  {'✓ REACHED' if consensus_reached else '✗ NOT REACHED'}")
+        log(f"  Consensus:  {'REACHED' if consensus_reached else 'NOT REACHED'}")
         log("")
 
         # If enough nodes accept the record, store it across all nodes
         if consensus_reached:
-            log("  [COMMIT PHASE] All nodes storing accepted record...")
+            log("  [COMMIT PHASE] All nodes storing accepted record")
             for node in self.nodes:
                 node.add_record(new_record)
                 log(f"    Node {node.node_id}: Record stored locally ✓")

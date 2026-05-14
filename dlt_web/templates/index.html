@@ -86,7 +86,7 @@ h2 { font-size: 18px; margin-bottom: 4px; }
 
 /* Small boxes used to group each task's form and results */
 .card {
-  border: 1px solid #5e5c5c;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   padding: 16px;
   margin-bottom: 16px;
@@ -97,7 +97,7 @@ h2 { font-size: 18px; margin-bottom: 4px; }
   font-size: 13px;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ffffff;
 }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -126,7 +126,7 @@ input[type=text], input[type=number], select {
   font-size: 13px;
   font-family: Arial, sans-serif;
   background: #fff;
-  color: #111;
+  color: #000000;
 }
 input:focus, select:focus { outline: none; border-color: #555; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -134,21 +134,14 @@ input:focus, select:focus { outline: none; border-color: #555; }
 /* Basic button styling for task actions */
 button {
   padding: 8px 16px;
-  border: 1px solid #111;
+  border: 1px solid #000000;
   border-radius: 3px;
-  background: #111;
+  background: #0f9b22;
   color: #fff;
   font-size: 13px;
   cursor: pointer;
   font-family: Arial, sans-serif;
 }
-button:hover { background: #333; }
-button:disabled { background: #999; border-color: #999; cursor: not-allowed; }
-button.btn-secondary { background: #fff; color: #111; }
-button.btn-secondary:hover { background: #f0f0f0; }
-button.btn-danger { background: #fff; color: #c00; border-color: #c00; font-size: 12px; width: 100%; }
-button.btn-danger:hover { background: #fef0f0; }
-.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
 /* Table styling for any record or node outputs */
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -160,7 +153,7 @@ th {
 td { padding: 7px 10px; border: 1px solid #ddd; color: #222; }
 tr:hover td { background: #fafafa; }
 
-/* Log area - plain text output, no dark styling */
+/* Log area*/
 .log-wrap { margin-top: 16px; }
 .log-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -183,24 +176,6 @@ tr:hover td { background: #fafafa; }
 .log-line.head { color: #111; }
 .log-line.dim  { color: #111; }
 
-/* Result banner
-.result-banner {
-  border-radius: 3px; padding: 14px 16px;
-  margin-top: 14px; display: none; border: 1px solid #ccc;
-}
-.result-banner.success { display: block; background: #f0fff0; border-color: #4caf50; }
-.result-banner.failure { display: block; background: #fff0f0; border-color: #f44336; }
-.result-title { font-weight: bold; margin-bottom: 10px; font-size: 13px; }
-.result-banner.success .result-title { color: #2e7d32; }
-.result-banner.failure .result-title { color: #c62828; }
-
-.result-kv { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; font-size: 12px; font-family: monospace; }
-.result-kv .rk { color: #888; }
-.result-kv .rv { color: #111; word-break: break-all; }
-.result-kv .rv.ok  { color: #2e7d32; }
-.result-kv .rv.err { color: #c62828; }
-.result-kv .rv.hl  { color: #1565c0; } */
-
 /* Vote badges used in Task 2 to show ACCEPT or REJECT */
 .vote-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .vote-chip {
@@ -218,12 +193,12 @@ tr:hover td { background: #fafafa; }
 }
 
 /* Small explanation boxes used around the page */
-.info-box {
+/* .info-box {
   background: #f9f9f9; border: 1px solid #ddd;
   border-radius: 3px; padding: 12px 14px;
   font-size: 12px; color: #444; line-height: 1.9;
 }
-.info-box p { margin-bottom: 2px; }
+.info-box p { margin-bottom: 2px; } */
 </style>
 </head>
 <body>
@@ -408,7 +383,7 @@ function toast(msg, type = '') {
   setTimeout(() => t.remove(), 3000);
 }
 
-// Sends requests to the Flask backend and checks that JSON is returned
+// Sends requests to the Flask backend and checks that Json is returned
 async function api(path, body = null) {
   const opts = body
     ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }

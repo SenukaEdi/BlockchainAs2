@@ -22,7 +22,6 @@ system = DLTSystem()
 
 
 # Collects the step-by-step messages from the DLT system
-# These logs are later shown in the webpage output box
 def make_logger():
     logs = []
     def callback(msg):
@@ -32,7 +31,6 @@ def make_logger():
     return callback, get
 
 
-# Loads the main webpage
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -87,7 +85,7 @@ def api_task1():
     })
 
 
-# Task 2: runs PBFT consensus using the signed record from Task 1
+# Task 2: runs consensus using the signed record from Task 1
 @app.route("/api/task2", methods=["POST"])
 def api_task2():
     body      = request.get_json(force=True)
