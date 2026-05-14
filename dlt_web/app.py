@@ -22,7 +22,6 @@ system = DLTSystem()
 
 
 # Collects the step-by-step messages from the DLT system
-# These logs are later shown in the webpage output box
 def make_logger():
     logs = []
     def callback(msg):
@@ -32,7 +31,6 @@ def make_logger():
     return callback, get
 
 
-# Loads the main webpage
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -68,7 +66,7 @@ def api_task1():
         record["qty"]   = int(record["qty"])
         record["price"] = int(record["price"])
     except (ValueError, TypeError):
-        return jsonify({"error": "qty and price must be integers"}), 400
+        return jsonify({"error": "qty and price have to be integers"}), 400
 
     log_cb, get_logs = make_logger()
     signature, verifications = system.task1_sign_and_verify(
@@ -87,7 +85,7 @@ def api_task1():
     })
 
 
-# Task 2: runs PBFT consensus using the signed record from Task 1
+# Task 2: runs consensus using the signed record from Task 1
 @app.route("/api/task2", methods=["POST"])
 def api_task2():
     body      = request.get_json(force=True)
@@ -98,14 +96,14 @@ def api_task2():
     if node_id not in system.nodes:
         return jsonify({"error": f"Unknown node '{node_id}'"}), 400
     if not signature:
-        return jsonify({"error": "signature is required"}), 400
+        return jsonify({"error": "signature is needed"}), 400
 
     try:
         record["qty"]   = int(record["qty"])
         record["price"] = int(record["price"])
         signature       = int(signature)
     except (ValueError, TypeError):
-        return jsonify({"error": "qty, price and signature must be integers"}), 400
+        return jsonify({"error": "qty, price and signature have to be integers"}), 400
 
     log_cb, get_logs = make_logger()
     consensus_reached, votes = system.task2_consensus(
@@ -172,7 +170,7 @@ def api_task3():
     item_id = body.get("item_id", "").strip()
 
     if not item_id:
-        return jsonify({"error": "item_id is required"}), 400
+        return jsonify({"error": "item_id is needed"}), 400
 
     log_cb, get_logs = make_logger()
     result = system.task3_query(item_id=item_id, log_callback=log_cb)
@@ -191,11 +189,11 @@ def api_task3():
 def api_reset():
     for node in system.nodes.values():
         node.clear_all_records()
-    return jsonify({"ok": True, "message": "All node records cleared."})
+    return jsonify({"ok": True, "message": "All nodes cleared records."})
 
 
 # Starts the Flask server
 if __name__ == "__main__":
-    print("\n  DLT Inventory System — web interface")
-    print("  Open http://127.0.0.1:5000 in your browser\n")
+    print("\n  web page")
+    print("  http://127.0.0.1:5000 \n")
     app.run(debug=True, port=5000)
