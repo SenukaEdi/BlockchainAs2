@@ -160,31 +160,28 @@ th {
 td { padding: 7px 10px; border: 1px solid #ddd; color: #222; }
 tr:hover td { background: #fafafa; }
 
-/* Log area where each task shows the backend steps */
+/* Log area - plain text output, no dark styling */
 .log-wrap { margin-top: 16px; }
 .log-header {
   display: flex; justify-content: space-between; align-items: center;
-  background: #111; color: #fff;
-  padding: 6px 12px; font-size: 11px;
-  border-radius: 3px 3px 0 0;
+  padding: 6px 0; font-size: 12px;
+  border-bottom: 1px solid #ccc;
 }
 .log-status { font-weight: bold; }
 .log-body {
-  background: #1a1a1a; color: #ccc;
-  padding: 10px 12px;
-  font-family: monospace; font-size: 11px; line-height: 1.7;
-  max-height: 380px; overflow-y: auto;
-  border: 1px solid #111; border-top: none;
-  border-radius: 0 0 3px 3px;
+  padding: 10px 0;
+  font-family: Arial, sans-serif; font-size: 12px; line-height: 1.9;
+  max-height: 420px; overflow-y: auto;
   display: none;
+  color: #111;
 }
 .log-body.visible { display: block; }
 .log-line { display: block; }
-.log-line.ok   { color: #4caf50; }
-.log-line.err  { color: #f44; }
-.log-line.step { color: #ff9; }
-.log-line.head { color: #adf; }
-.log-line.dim  { color: #555; }
+.log-line.ok   { color: #111; }
+.log-line.err  { color: #111; }
+.log-line.step { color: #111; }
+.log-line.head { color: #111; }
+.log-line.dim  { color: #111; }
 
 /* Result banner
 .result-banner {
@@ -517,11 +514,12 @@ async function runTask1() {
     document.getElementById('t1-result-kv').innerHTML = `
       <span class="rk">Node</span><span class="rv">${res.node_id}</span>
       <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
-      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
+      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature}</span>
       ${Object.entries(res.verifications).map(([k,v]) =>
         `<span class="rk">Node ${k} verify</span><span class="rv ${v?'ok':'err'}">${v ? '✓ VALID' : '✗ INVALID'}</span>`
       ).join('')}
     `;
+    // save the result so Task 2 can auto-fill from it
     window._lastT1 = { node_id, record: res.record, signature: res.signature };
     toast('Record signed successfully', 'ok');
   } catch (e) {
@@ -572,6 +570,7 @@ async function runTask2() {
       <span class="rk">Threshold</span><span class="rv">75% (${Math.ceil(res.votes.length*0.75)}/${res.votes.length})</span>
       <span class="rk">Decision</span><span class="rv ${res.consensus_reached?'ok':'err'}">${res.consensus_reached ? 'COMMITTED' : 'ABORTED'}</span>
     `;
+    // reload nodes so the item dropdown in Task 3 picks up the new record
     if (res.consensus_reached) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
     else toast('Consensus not reached', 'err');
   } catch (e) {
@@ -603,11 +602,11 @@ async function runTask3() {
         <span class="rk">Quantity</span><span class="rv ok">${r.qty}</span>
         <span class="rk">Price</span><span class="rv">${r.price}</span>
         <span class="rk">Location</span><span class="rv">${r.location}</span>
-        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S.slice(0,60)}...</span>
+        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S}</span>
         <span class="rk">Agg. Random (R)</span><span class="rv">${res.R}</span>
         <span class="rk">Sig verified</span><span class="rv ok">✓ YES</span>
         <span class="rk">Sig consistent</span><span class="rv ok">✓ YES</span>
-        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted.slice(0,60)}...</span>
+        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted}</span>
         <span class="rk">Decrypted</span><span class="rv ok">${res.decrypted}</span>
       `;
     }

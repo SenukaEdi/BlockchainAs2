@@ -4,5 +4,17 @@
     "qty": 20,
     "price": 30,
     "location": "B"
+  },
+  {
+    "item_id": "003",
+    "qty": 12,
+    "price": 19,
+    "location": "C"
+  },
+  {
+    "item_id": "004",
+    "qty": 10,
+    "price": 25,
+    "location": "B"
   }
 ]
