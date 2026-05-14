@@ -1,12 +1,4 @@
-# =============================================================================
-# keys_config.py
-# Hardcoded cryptographic parameters from the List of Keys document
-# INTE2627 Assignment 2 - DLT Inventory Management System
-# =============================================================================
-
-# -------------------------
-# PART 1 - RSA Keys per Inventory Node
-# -------------------------
+# from list of keys document provided for assignment
 
 INVENTORY_KEYS = {
     "A": {
@@ -31,9 +23,6 @@ INVENTORY_KEYS = {
     },
 }
 
-# -------------------------
-# PART 2 - PKG and Procurement Officer RSA Keys
-# -------------------------
 
 PKG_KEYS = {
     "p": 1004162036461488639338597000466705179253226703,
@@ -47,9 +36,6 @@ PROCUREMENT_KEYS = {
     "e": 106506253943651610547613,
 }
 
-# -------------------------
-# PART 2 - Identity and Random Values for Harn Multi-Signature
-# -------------------------
 
 INVENTORY_IDS = {
     "A": 126,

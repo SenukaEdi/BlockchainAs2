@@ -1,40 +1,18 @@
-# =============================================================================
-# consensus.py
-# Simplified PBFT-inspired consensus protocol.
-#
-# Chosen Protocol: Practical Byzantine Fault Tolerance (PBFT) - Simplified
-#
-# Justification:
-#   - The inventory system is permissioned (known nodes), making PBFT appropriate.
-#   - PBFT handles up to f malicious/faulty nodes when total nodes n >= 3f+1.
-#   - Latency: O(n^2) messages per consensus round - acceptable for small n.
-#   - Security: Nodes vote on the record hash; a supermajority is required.
-#   - Fault tolerance: System still reaches consensus if minority nodes are faulty.
-#   - Better than PoW (no mining needed for permissioned system) and
-#     Raft (Raft handles crashes but not Byzantine behavior).
-#
-# Simplified implementation:
-#   Each node independently verifies the record signature and casts a vote.
-#   If >= threshold fraction of nodes vote ACCEPT, consensus is REACHED.
-# =============================================================================
-
 import math
 from typing import List, Tuple
 from inventory_node import InventoryNode
 
 
-CONSENSUS_THRESHOLD = 0.75   # fraction of nodes that must agree
+# Minimum percentage of nodes that must agree before the record is accepted
+CONSENSUS_THRESHOLD = 0.75
 
 
 class ConsensusEngine:
-    """
-    Manages consensus across all inventory nodes for record acceptance.
-    The node list is passed in at construction — no node count is hardcoded.
-    """
-
+    # Handles the voting process between all inventory nodes
     def __init__(self, nodes: List[InventoryNode]):
         self.nodes = nodes
 
+    # Runs the simplified PBFT process for one new record
     def run_consensus(
         self,
         new_record: dict,
@@ -43,25 +21,14 @@ class ConsensusEngine:
         signer_n: int,
         log_callback=None
     ) -> Tuple[bool, List[dict]]:
-        """
-        Run the consensus protocol for a proposed new record.
 
-        Phase 1 - Pre-prepare: Leader (originating node) broadcasts signed record.
-        Phase 2 - Prepare:     Each node verifies the signature independently.
-        Phase 3 - Commit:      Each node casts a vote (ACCEPT / REJECT).
-        Phase 4 - Decision:    Count votes; if >= threshold → consensus reached.
-
-        Returns:
-            (consensus_reached: bool, vote_details: list of dicts)
-        """
-
+        # Sends log messages back to the webpage if logging is available
         def log(msg):
             if log_callback:
                 log_callback(msg)
 
         n_nodes  = len(self.nodes)
         required = math.ceil(CONSENSUS_THRESHOLD * n_nodes)
-        # Compute the Byzantine fault tolerance: how many faulty nodes are tolerated
         f_tolerated = (n_nodes - 1) // 3
 
         log("=" * 60)
@@ -76,8 +43,8 @@ class ConsensusEngine:
         votes = []
         accept_count = 0
 
+        # Each node checks the signature and then votes ACCEPT or REJECT
         for node in self.nodes:
-            # Each node independently verifies the signature
             is_valid = node.verify_record(new_record, signature, signer_e, signer_n)
             vote = "ACCEPT" if is_valid else "REJECT"
 
@@ -101,6 +68,7 @@ class ConsensusEngine:
         log(f"  Consensus:  {'✓ REACHED' if consensus_reached else '✗ NOT REACHED'}")
         log("")
 
+        # If enough nodes accept the record, store it across all nodes
         if consensus_reached:
             log("  [COMMIT PHASE] All nodes storing accepted record...")
             for node in self.nodes:

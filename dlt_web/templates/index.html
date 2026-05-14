@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DLT Inventory System — INTE2627</title>
+<title>Assignment 2</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -14,13 +14,13 @@ body {
   font-size: 14px;
 }
 
-/* Layout */
+/* Basic page layout for the side menu and main content area */
 #app { display: flex; min-height: 100vh; }
 
 #sidebar {
   width: 200px;
   background: #f5f5f5;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid #ffffff;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -32,7 +32,7 @@ body {
 
 .sidebar-title {
   padding: 16px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ffffff;
   font-weight: bold;
   font-size: 13px;
 }
@@ -62,12 +62,12 @@ nav { padding: 8px 0; flex: 1; }
   color: #333;
   border-left: 3px solid transparent;
 }
-.nav-item:hover { background: #eee; }
+.nav-item:hover { background: #ffffff; }
 .nav-item.active { background: #e8e8e8; border-left-color: #111; font-weight: bold; color: #000; }
 
 .sidebar-bottom {
   padding: 12px 16px;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #d80404;
 }
 
 #main {
@@ -77,16 +77,16 @@ nav { padding: 8px 0; flex: 1; }
   overflow-y: auto;
 }
 
-/* Sections */
+/* Only the selected task is shown on the screen */
 .section { display: none; }
 .section.active { display: block; }
 
 h2 { font-size: 18px; margin-bottom: 4px; }
-.page-desc { color: #555; font-size: 13px; margin-bottom: 20px; }
+.page-desc { color: #040404; font-size: 13px; margin-bottom: 20px; }
 
-/* Cards */
+/* Small boxes used to group each task's form and results */
 .card {
-  border: 1px solid #ccc;
+  border: 1px solid #5e5c5c;
   border-radius: 4px;
   padding: 16px;
   margin-bottom: 16px;
@@ -103,7 +103,7 @@ h2 { font-size: 18px; margin-bottom: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
 
-/* Stats */
+/* Extra styling for any summary/stat boxes if needed */
 .stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .stat-box {
   border: 1px solid #ccc;
@@ -115,7 +115,7 @@ h2 { font-size: 18px; margin-bottom: 4px; }
 .stat-box .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
 .stat-box .stat-value { font-size: 20px; font-weight: bold; }
 
-/* Forms */
+/* Form fields used for entering record and query details */
 .form-group { margin-bottom: 12px; }
 label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
 input[type=text], input[type=number], select {
@@ -131,7 +131,7 @@ input[type=text], input[type=number], select {
 input:focus, select:focus { outline: none; border-color: #555; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* Buttons */
+/* Basic button styling for task actions */
 button {
   padding: 8px 16px;
   border: 1px solid #111;
@@ -150,7 +150,7 @@ button.btn-danger { background: #fff; color: #c00; border-color: #c00; font-size
 button.btn-danger:hover { background: #fef0f0; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
-/* Tables */
+/* Table styling for any record or node outputs */
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th {
   text-align: left; padding: 7px 10px;
@@ -160,33 +160,30 @@ th {
 td { padding: 7px 10px; border: 1px solid #ddd; color: #222; }
 tr:hover td { background: #fafafa; }
 
-/* Log */
+/* Log area - plain text output, no dark styling */
 .log-wrap { margin-top: 16px; }
 .log-header {
   display: flex; justify-content: space-between; align-items: center;
-  background: #111; color: #fff;
-  padding: 6px 12px; font-size: 11px;
-  border-radius: 3px 3px 0 0;
+  padding: 6px 0; font-size: 12px;
+  border-bottom: 1px solid #ccc;
 }
 .log-status { font-weight: bold; }
 .log-body {
-  background: #1a1a1a; color: #ccc;
-  padding: 10px 12px;
-  font-family: monospace; font-size: 11px; line-height: 1.7;
-  max-height: 380px; overflow-y: auto;
-  border: 1px solid #111; border-top: none;
-  border-radius: 0 0 3px 3px;
+  padding: 10px 0;
+  font-family: Arial, sans-serif; font-size: 12px; line-height: 1.9;
+  max-height: 420px; overflow-y: auto;
   display: none;
+  color: #111;
 }
 .log-body.visible { display: block; }
 .log-line { display: block; }
-.log-line.ok   { color: #4caf50; }
-.log-line.err  { color: #f44; }
-.log-line.step { color: #ff9; }
-.log-line.head { color: #adf; }
-.log-line.dim  { color: #555; }
+.log-line.ok   { color: #111; }
+.log-line.err  { color: #111; }
+.log-line.step { color: #111; }
+.log-line.head { color: #111; }
+.log-line.dim  { color: #111; }
 
-/* Result banner */
+/* Result banner
 .result-banner {
   border-radius: 3px; padding: 14px 16px;
   margin-top: 14px; display: none; border: 1px solid #ccc;
@@ -202,9 +199,9 @@ tr:hover td { background: #fafafa; }
 .result-kv .rv { color: #111; word-break: break-all; }
 .result-kv .rv.ok  { color: #2e7d32; }
 .result-kv .rv.err { color: #c62828; }
-.result-kv .rv.hl  { color: #1565c0; }
+.result-kv .rv.hl  { color: #1565c0; } */
 
-/* Vote chips */
+/* Vote badges used in Task 2 to show ACCEPT or REJECT */
 .vote-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .vote-chip {
   padding: 3px 10px; border-radius: 3px;
@@ -213,53 +210,47 @@ tr:hover td { background: #fafafa; }
 .vote-chip.accept { background: #f0fff0; color: #2e7d32; border-color: #4caf50; }
 .vote-chip.reject { background: #fff0f0; color: #c62828; border-color: #f44336; }
 
-/* Key display */
+/* Shows long public key values in a readable way */
 .key-display {
   font-family: monospace; font-size: 10px; color: #888;
   word-break: break-all; line-height: 1.7;
   margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;
 }
 
-/* Info box */
+/* Small explanation boxes used around the page */
 .info-box {
   background: #f9f9f9; border: 1px solid #ddd;
   border-radius: 3px; padding: 12px 14px;
   font-size: 12px; color: #444; line-height: 1.9;
 }
 .info-box p { margin-bottom: 2px; }
-
-#toast {
-  display: none !important;
-}
 </style>
 </head>
 <body>
 
 <div id="app">
 
-  <!-- Sidebar -->
+  <!-- Side menu used to move between Task 1, Task 2 and Task 3 -->
   <aside id="sidebar">
     <div class="sidebar-title">
-      DLT-based Inventory System
-      <small>Assignment 2 - s4092199 & s4095201</small>
+      DLT based Inventory System
+      <small>Assignment 2 - s4092199, s4095201</small>
     </div>
     <nav>
-
       <div class="nav-item active" data-section="task1" onclick="navigate(this)">Task 1</div>
       <div class="nav-item" data-section="task2" onclick="navigate(this)">Task 2</div>
-      <div class="nav-item" data-section="task12" onclick="navigate(this)">Tasks 1+2</div>
 
       <div class="nav-item" data-section="task3" onclick="navigate(this)">Task 3</div>
     </nav>
   </aside>
 
-  <!-- Main -->
+  <!-- Main content area where each selected task is displayed -->
   <main id="main">
 
-    <!-- Task 1 -->
-    <section id="section-task1" class="section">
+    <!-- Task 1: create a record and generate a digital signature -->
+    <section id="section-task1" class="section active">
       <h2>Task 1 — Digital Signature Authentication</h2>
-      <p class="page-desc">Select a node, enter a new inventory record, and sign it with that node's RSA private key. All other nodes verify the signature.</p>
+      <p class="page-desc">First select a node, then enter item ID, Location, Qty, and Price, after click sign record. Once you do that, copy the signature output for Task 2.</p>
 
       <div class="grid-2">
         <div class="card">
@@ -271,40 +262,31 @@ tr:hover td { background: #fafafa; }
           <div class="form-row">
             <div class="form-group">
               <label>Item ID</label>
-              <input id="t1-item_id" type="text" placeholder="e.g. 004">
+              <input id="t1-item_id" type="text">
             </div>
             <div class="form-group">
               <label>Location</label>
-              <input id="t1-location" type="text" placeholder="e.g. A">
+              <input id="t1-location" type="text">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Quantity</label>
-              <input id="t1-qty" type="number" placeholder="e.g. 12">
+              <input id="t1-qty" type="number">
             </div>
             <div class="form-group">
               <label>Price</label>
-              <input id="t1-price" type="number" placeholder="e.g. 18">
+              <input id="t1-price" type="number">
             </div>
           </div>
           <button id="btn-t1" onclick="runTask1()">Sign Record</button>
         </div>
 
-        <!-- <div class="card">
-          <div class="card-title">How It Works</div>
-          <div class="info-box">
-            <p><b>Step 1</b> — RSA keys derived: n = p×q, φ(n) = (p−1)(q−1), d = e⁻¹ mod φ(n)</p>
-            <p><b>Step 2</b> — Record hashed: H(record) = SHA-256 mod n</p>
-            <p><b>Step 3</b> — Signature: S = H(record)^d mod n</p>
-            <p><b>Step 4</b> — All nodes verify: S^e mod n == H(record)</p>
-          </div>
-        </div> -->
       </div>
 
       <div class="log-wrap">
         <div class="log-header">
-          <span>Task 1 — Execution Log</span>
+          <span>Task 1 How it works</span>
           <span class="log-status" id="t1-log-status">—</span>
         </div>
         <div class="log-body" id="t1-log-body"></div>
@@ -315,11 +297,10 @@ tr:hover td { background: #fafafa; }
       </div>
     </section>
 
-    <!-- Task 2 -->
+    <!-- Task 2: use the Task 1 signature and run consensus -->
     <section id="section-task2" class="section">
       <h2>Task 2 — Consensus Protocol (PBFT)</h2>
-      <p class="page-desc">Enter a record and signature. All inventory nodes vote on whether to accept it. Requires 75% supermajority.</p>
-
+      <p class="page-desc">Re enter the same details from task 1, but now paste the signature to run consensus </p>
       <div class="grid-2">
         <div class="card">
           <div class="card-title">Consensus Input</div>
@@ -330,47 +311,36 @@ tr:hover td { background: #fafafa; }
           <div class="form-row">
             <div class="form-group">
               <label>Item ID</label>
-              <input id="t2-item_id" type="text" placeholder="e.g. 004">
+              <input id="t2-item_id" type="text">
             </div>
             <div class="form-group">
               <label>Location</label>
-              <input id="t2-location" type="text" placeholder="e.g. A">
+              <input id="t2-location" type="text">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Quantity</label>
-              <input id="t2-qty" type="number" placeholder="e.g. 12">
+              <input id="t2-qty" type="number">
             </div>
             <div class="form-group">
               <label>Price</label>
-              <input id="t2-price" type="number" placeholder="e.g. 18">
+              <input id="t2-price" type="number">
             </div>
           </div>
           <div class="form-group">
-            <label>Signature (integer from Task 1)</label>
-            <input id="t2-sig" type="text" placeholder="Paste signature integer here">
+            <label>Signature (from Task 1)</label>
+            <input id="t2-sig" type="text">
           </div>
           <div class="btn-row">
-            <button id="btn-t2" onclick="runTask2()">Run Consensus</button>
-            <button class="btn-secondary" onclick="autofillT2()">Auto-fill from Task 1</button>
+            <button id="btn-t2" onclick="runTask2()">Run</button>
           </div>
         </div>
-
-        <!-- <div class="card">
-          <div class="card-title">PBFT Phases</div>
-          <div class="info-box">
-            <p><b>Pre-prepare</b> — Leader broadcasts signed record</p>
-            <p><b>Prepare</b> — Each node verifies RSA signature independently</p>
-            <p><b>Commit</b> — Each node casts ACCEPT or REJECT vote</p>
-            <p><b>Decision</b> — &ge;75% ACCEPT &rarr; record stored at all nodes</p>
-          </div>
-        </div> -->
       </div>
 
       <div class="log-wrap">
         <div class="log-header">
-          <span>Task 2 — Execution Log</span>
+          <span>Task 2 How it works</span>
           <span class="log-status" id="t2-log-status">—</span>
         </div>
         <div class="log-body" id="t2-log-body"></div>
@@ -382,70 +352,10 @@ tr:hover td { background: #fafafa; }
       </div>
     </section>
 
-    <!-- Tasks 1+2 Combined -->
-    <section id="section-task12" class="section">
-      <h2>Tasks 1+2 Combined — Full Record Insertion</h2>
-      <p class="page-desc">Sign a new record then immediately run consensus. The complete Part 1 workflow in one step.</p>
-
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title">New Record</div>
-          <div class="form-group">
-            <label>Originating Node</label>
-            <select id="t12-node"></select>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Item ID</label>
-              <input id="t12-item_id" type="text" placeholder="e.g. 004">
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input id="t12-location" type="text" placeholder="e.g. A">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Quantity</label>
-              <input id="t12-qty" type="number" placeholder="e.g. 12">
-            </div>
-            <div class="form-group">
-              <label>Price</label>
-              <input id="t12-price" type="number" placeholder="e.g. 18">
-            </div>
-          </div>
-          <button id="btn-t12" onclick="runTask12()">Sign → Consensus → Store</button>
-        </div>
-
-        <!-- <div class="card">
-          <div class="card-title">Lifecycle</div>
-          <div class="info-box">
-            <p><b>1.</b> Node generates RSA signature on new record</p>
-            <p><b>2.</b> All nodes verify the signature</p>
-            <p><b>3.</b> PBFT vote — 75% threshold required</p>
-            <p><b>4.</b> If accepted: record written to all node JSON stores</p>
-          </div>
-        </div> -->
-      </div>
-
-      <div class="log-wrap">
-        <div class="log-header">
-          <span>Tasks 1+2 — Execution Log</span>
-          <span class="log-status" id="t12-log-status">—</span>
-        </div>
-        <div class="log-body" id="t12-log-body"></div>
-      </div>
-      <div class="result-banner" id="t12-result">
-        <div class="result-title" id="t12-result-title"></div>
-        <div class="vote-row" id="t12-votes"></div>
-        <div class="result-kv" id="t12-result-kv" style="margin-top:10px;"></div>
-      </div>
-    </section>
-
-    <!-- Task 3 -->
+    <!-- Task 3: query an existing item and show the multi-signature result -->
     <section id="section-task3" class="section">
-      <h2>Task 3 — Multi-Signature Query &amp; Secure Delivery</h2>
-      <p class="page-desc">Query an item's quantity. All nodes jointly sign the result using the Harn identity-based scheme. The PKG encrypts the response with the Procurement Officer's RSA public key.</p>
+      <h2>Task 3 — Multi-Signature Query & Secure Delivery</h2>
+      <p class="page-desc">select your item id to query, submit, and then observe record saved in inventory.json file in VsCode.</p>
 
       <div class="grid-2">
         <div class="card">
@@ -453,27 +363,16 @@ tr:hover td { background: #fafafa; }
           <div class="form-group">
             <label>Item ID to Query</label>
             <select id="t3-item_id">
-              <option value="">— select item —</option>
+              <option value="">Select id</option>
             </select>
           </div>
-          <button id="btn-t3" onclick="runTask3()">Submit Query</button>
+          <button id="btn-t3" onclick="runTask3()">Run Query</button>
         </div>
-
-        <!-- <div class="card">
-          <div class="card-title">Harn Multi-Signature Scheme</div>
-          <div class="info-box">
-            <p><b>PKG issues</b> s_i = ID_i^d_pkg mod n_pkg</p>
-            <p><b>Each node signs</b> sig_i = (H(m) * r_i + s_i) mod n_pkg</p>
-            <p><b>Aggregate</b> S = sum(sig_i) mod n_pkg</p>
-            <p><b>Verify</b> S == (H(m)*R + sum(s_i)) mod n_pkg</p>
-            <p><b>Encrypt</b> C = M^e_officer mod n_officer</p>
-          </div>
-        </div> -->
       </div>
 
       <div class="log-wrap">
         <div class="log-header">
-          <span>Task 3 — Execution Log</span>
+          <span>Task 3 How it works</span>
           <span class="log-status" id="t3-log-status">—</span>
         </div>
         <div class="log-body" id="t3-log-body"></div>
@@ -492,6 +391,7 @@ tr:hover td { background: #fafafa; }
 <script>
 let nodesData = {};
 
+// Switches between the task pages when the user clicks the side menu
 function navigate(el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -499,6 +399,7 @@ function navigate(el) {
   document.getElementById('section-' + el.dataset.section).classList.add('active');
 }
 
+// Small message popup used for success and error messages
 function toast(msg, type = '') {
   const t = document.createElement('div');
   t.className = 'toast-item' + (type ? ' ' + type : '');
@@ -507,6 +408,7 @@ function toast(msg, type = '') {
   setTimeout(() => t.remove(), 3000);
 }
 
+// Sends requests to the Flask backend and checks that JSON is returned
 async function api(path, body = null) {
   const opts = body
     ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
@@ -521,6 +423,7 @@ async function api(path, body = null) {
   return data;
 }
 
+// Prints the backend steps into the log box and colours important lines
 function renderLogs(bodyId, logs, statusId, statusText, statusOk) {
   const el = document.getElementById(bodyId);
   const st = document.getElementById(statusId);
@@ -543,20 +446,20 @@ function renderLogs(bodyId, logs, statusId, statusText, statusOk) {
   el.scrollTop = el.scrollHeight;
 }
 
+// Loads the node data from the backend so the dropdowns can be filled in
 async function loadNodes() {
   try {
     const data = await api('/api/nodes');
     nodesData = data.nodes;
-    renderDashboard();
-    renderNodesFull();
     populateNodeSelects();
     populateItemSelect();
   } catch (e) { toast('Failed to load nodes: ' + e.message, 'err'); }
 }
 
+// Adds the available inventory nodes to the Task 1 and Task 2 dropdowns
 function populateNodeSelects() {
   const ids = Object.keys(nodesData);
-  ['t1-node','t2-node','t12-node'].forEach(sid => {
+  ['t1-node','t2-node'].forEach(sid => {
     const sel = document.getElementById(sid);
     const prev = sel.value;
     sel.innerHTML = '';
@@ -569,6 +472,7 @@ function populateNodeSelects() {
   });
 }
 
+// Adds stored item IDs to the Task 3 query dropdown
 function populateItemSelect() {
   const sel = document.getElementById('t3-item_id');
   const prev = sel.value;
@@ -588,53 +492,7 @@ function populateItemSelect() {
   if (prev) sel.value = prev;
 }
 
-function renderDashboard() {
-  const nodeIds = Object.keys(nodesData);
-  const totalRecords = Object.values(nodesData).reduce((s,n) => s + n.records.length, 0);
-
-  document.getElementById('stat-tiles').innerHTML = `
-    <div class="stat-box"><div class="stat-label">Nodes Online</div><div class="stat-value">${nodeIds.length}</div></div>
-    <div class="stat-box"><div class="stat-label">Total Records</div><div class="stat-value">${totalRecords}</div></div>
-    <div class="stat-box"><div class="stat-label">Consensus</div><div class="stat-value" style="font-size:15px;padding-top:3px;">PBFT</div></div>
-    <div class="stat-box"><div class="stat-label">Multi-Sig</div><div class="stat-value" style="font-size:15px;padding-top:3px;">Harn</div></div>
-  `;
-
-  const wrap = document.getElementById('dashboard-nodes');
-  if (totalRecords === 0) {
-    wrap.innerHTML = `<div class="card" style="text-align:center;padding:30px;">
-      <p style="margin-bottom:12px;color:#555;">No records yet. Use <b>Tasks 1+2 Combined</b> to add your first inventory record.</p>
-      <button onclick="navigate(document.querySelector('[data-section=task12]'))">Add First Record</button>
-    </div>`;
-    return;
-  }
-  wrap.innerHTML = '<div class="grid-2">' + nodeIds.map(nid => {
-    const node = nodesData[nid];
-    const rows = node.records.length === 0
-      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records</td></tr>`
-      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
-    return `<div class="card">
-      <div class="card-title">Node ${nid} &nbsp;<small style="font-weight:normal;color:#888;">${node.records.length} record(s)</small></div>
-      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
-      <div class="key-display"><b>e:</b> ${node.public_key.e}<br><b>n:</b> ${node.public_key.n.slice(0,50)}...</div>
-    </div>`;
-  }).join('') + '</div>';
-}
-
-function renderNodesFull() {
-  const wrap = document.getElementById('nodes-full');
-  wrap.innerHTML = Object.keys(nodesData).map(nid => {
-    const node = nodesData[nid];
-    const rows = node.records.length === 0
-      ? `<tr><td colspan="4" style="color:#999;text-align:center;">No records — add via Tasks 1+2</td></tr>`
-      : node.records.map(r => `<tr><td>${r.item_id}</td><td>${r.qty}</td><td>${r.price}</td><td>${r.location}</td></tr>`).join('');
-    return `<div class="card">
-      <div class="card-title">Inventory Node ${nid}</div>
-      <table><thead><tr><th>Item ID</th><th>Qty</th><th>Price</th><th>Location</th></tr></thead><tbody>${rows}</tbody></table>
-      <div class="key-display"><b>Public exponent (e):</b> ${node.public_key.e}<br><b>Modulus (n):</b> ${node.public_key.n}</div>
-    </div>`;
-  }).join('');
-}
-
+// Task 1: sends the new inventory record to Flask so it can be signed and verified
 async function runTask1() {
   const node_id  = document.getElementById('t1-node').value;
   const item_id  = document.getElementById('t1-item_id').value.trim();
@@ -656,11 +514,12 @@ async function runTask1() {
     document.getElementById('t1-result-kv').innerHTML = `
       <span class="rk">Node</span><span class="rv">${res.node_id}</span>
       <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
-      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
+      <span class="rk">Signature (S)</span><span class="rv hl">${res.signature}</span>
       ${Object.entries(res.verifications).map(([k,v]) =>
         `<span class="rk">Node ${k} verify</span><span class="rv ${v?'ok':'err'}">${v ? '✓ VALID' : '✗ INVALID'}</span>`
       ).join('')}
     `;
+    // save the result so Task 2 can auto-fill from it
     window._lastT1 = { node_id, record: res.record, signature: res.signature };
     toast('Record signed successfully', 'ok');
   } catch (e) {
@@ -669,6 +528,7 @@ async function runTask1() {
   } finally { btn.disabled = false; btn.textContent = 'Sign Record'; }
 }
 
+// Copies the last Task 1 result into Task 2 so the same record is used
 function autofillT2() {
   if (!window._lastT1) { toast('Run Task 1 first', 'err'); return; }
   const { node_id, record, signature } = window._lastT1;
@@ -681,6 +541,7 @@ function autofillT2() {
   toast('Fields filled from Task 1', 'ok');
 }
 
+// Task 2: sends the signed record to Flask so PBFT consensus can be checked
 async function runTask2() {
   const node_id   = document.getElementById('t2-node').value;
   const item_id   = document.getElementById('t2-item_id').value.trim();
@@ -709,6 +570,7 @@ async function runTask2() {
       <span class="rk">Threshold</span><span class="rv">75% (${Math.ceil(res.votes.length*0.75)}/${res.votes.length})</span>
       <span class="rk">Decision</span><span class="rv ${res.consensus_reached?'ok':'err'}">${res.consensus_reached ? 'COMMITTED' : 'ABORTED'}</span>
     `;
+    // reload nodes so the item dropdown in Task 3 picks up the new record
     if (res.consensus_reached) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
     else toast('Consensus not reached', 'err');
   } catch (e) {
@@ -717,45 +579,7 @@ async function runTask2() {
   } finally { btn.disabled = false; btn.textContent = 'Run Consensus'; }
 }
 
-async function runTask12() {
-  const node_id  = document.getElementById('t12-node').value;
-  const item_id  = document.getElementById('t12-item_id').value.trim();
-  const qty      = document.getElementById('t12-qty').value;
-  const price    = document.getElementById('t12-price').value;
-  const location = document.getElementById('t12-location').value.trim().toUpperCase();
-  if (!item_id || !qty || !price || !location) { toast('Fill in all fields', 'err'); return; }
-
-  const btn = document.getElementById('btn-t12');
-  btn.disabled = true; btn.textContent = 'Processing...';
-  try {
-    const res = await api('/api/task1and2', { node_id, record: { item_id, qty, price, location } });
-    const ok  = res.all_valid && res.consensus_reached;
-    renderLogs('t12-log-body', res.logs, 't12-log-status', ok ? '✓ STORED' : '✗ FAILED', ok);
-    const rb = document.getElementById('t12-result');
-    rb.className = 'result-banner ' + (ok ? 'success' : 'failure');
-    document.getElementById('t12-result-title').textContent = ok
-      ? '✓ Record signed, consensus reached, stored across all nodes'
-      : '✗ Pipeline failed — check log';
-    document.getElementById('t12-votes').innerHTML = res.votes.map(v =>
-      `<div class="vote-chip ${v.vote === 'ACCEPT' ? 'accept' : 'reject'}">${v.vote === 'ACCEPT' ? '✓' : '✗'} Node ${v.node_id}: ${v.vote}</div>`
-    ).join('');
-    const accept = res.votes.filter(v => v.vote === 'ACCEPT').length;
-    document.getElementById('t12-result-kv').innerHTML = `
-      <span class="rk">Node</span><span class="rv">${res.node_id}</span>
-      <span class="rk">Record</span><span class="rv">${JSON.stringify(res.record)}</span>
-      <span class="rk">Signature</span><span class="rv hl">${res.signature.slice(0,60)}...</span>
-      <span class="rk">Sig Verified</span><span class="rv ${res.all_valid?'ok':'err'}">${res.all_valid ? '✓ YES' : '✗ NO'}</span>
-      <span class="rk">Vote tally</span><span class="rv ${res.consensus_reached?'ok':'err'}">${accept}/${res.votes.length} ACCEPT</span>
-      <span class="rk">Stored</span><span class="rv ${ok?'ok':'err'}">${ok ? '✓ ALL NODES' : '✗ REJECTED'}</span>
-    `;
-    if (ok) { await loadNodes(); toast('Record stored across all nodes', 'ok'); }
-    else toast('Pipeline failed', 'err');
-  } catch (e) {
-    toast(e.message, 'err');
-    renderLogs('t12-log-body', [e.message], 't12-log-status', '✗ ERROR', false);
-  } finally { btn.disabled = false; btn.textContent = 'Sign → Consensus → Store'; }
-}
-
+// Task 3: queries an item and displays the verified multi-signature response
 async function runTask3() {
   const item_id = document.getElementById('t3-item_id').value.trim();
   if (!item_id) { toast('Select an item ID', 'err'); return; }
@@ -778,11 +602,11 @@ async function runTask3() {
         <span class="rk">Quantity</span><span class="rv ok">${r.qty}</span>
         <span class="rk">Price</span><span class="rv">${r.price}</span>
         <span class="rk">Location</span><span class="rv">${r.location}</span>
-        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S.slice(0,60)}...</span>
+        <span class="rk">Agg. Signature (S)</span><span class="rv">${res.S}</span>
         <span class="rk">Agg. Random (R)</span><span class="rv">${res.R}</span>
         <span class="rk">Sig verified</span><span class="rv ok">✓ YES</span>
         <span class="rk">Sig consistent</span><span class="rv ok">✓ YES</span>
-        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted.slice(0,60)}...</span>
+        <span class="rk">Encrypted (C)</span><span class="rv">${res.encrypted}</span>
         <span class="rk">Decrypted</span><span class="rv ok">${res.decrypted}</span>
       `;
     }
@@ -793,6 +617,7 @@ async function runTask3() {
   } finally { btn.disabled = false; btn.textContent = 'Submit Query'; }
 }
 
+// Clears all stored records from the backend and reloads the page data
 async function resetSystem() {
   if (!confirm('This will permanently delete ALL records from all nodes. Continue?')) return;
   try {
@@ -802,17 +627,7 @@ async function resetSystem() {
   } catch (e) { toast(e.message, 'err'); }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const task1Tab = document.querySelector('[data-section="task1"]');
-
-  if (task1Tab) {
-    navigate(task1Tab);
-  }
-
-  loadNodes();
-  setInterval(loadNodes, 15000);
-});
-
+// Loads node data when the page starts, then refreshes it every 15 seconds
 loadNodes();
 setInterval(loadNodes, 15000);
 </script>
